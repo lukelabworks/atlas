@@ -1723,7 +1723,7 @@ function renderSettings() {
     <div class="settings-row">
       <div>
         <div class="settings-name">Version</div>
-        <div class="settings-sub">Atlas v0.8</div>
+        <div class="settings-sub">Atlas v0.9</div>
       </div>
     </div>
     <div id="settings-panel-host" style="padding: 0 20px;"></div>
@@ -2165,6 +2165,37 @@ function switchTrip(id) {
 
 /* Init */
 show('home');
+
+/* ===========================================
+   SERVICE WORKER — registers the cache manager and auto-updates.
+   When a new version is deployed, the SW detects it on next launch,
+   installs it in the background, and reloads the page once to apply.
+   =========================================== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      // Check for updates on each load.
+      reg.update();
+      // When a new SW takes control, reload once to get the fresh app.
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloaded) return;
+        reloaded = true;
+        window.location.reload();
+      });
+      // If a new version is waiting, tell it to activate immediately.
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            nw.postMessage('skipWaiting');
+          }
+        });
+      });
+    }).catch(() => {/* SW registration failed — app still works, just no offline cache */});
+  });
+}
 </script>
 </body>
 </html>
