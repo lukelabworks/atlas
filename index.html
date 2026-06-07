@@ -1001,7 +1001,10 @@ const SEARCH_BASES = {
   google:      { base: 'https://www.google.com/search?q=', icon: 'search', label: 'Google' },
   viator:      { base: 'https://www.viator.com/searchResults/all?text=', icon: 'ticket', label: 'Viator' },
   opentable:   { base: 'https://www.opentable.com/s?term=', icon: 'tools-kitchen-2', label: 'OpenTable' },
-  tripadvisor: { base: 'https://www.tripadvisor.com/Search?q=', icon: 'star', label: 'TripAdvisor' },
+  // TripAdvisor's web search doesn't reliably hand off to its app and often lands on
+  // a generic results page. Routing through Google opens Maps/Search (which work on the
+  // phone) and surfaces the TripAdvisor listing + reviews in the results.
+  tripadvisor: { base: 'https://www.google.com/search?q=', icon: 'star', label: 'Reviews', suffix: ' tripadvisor' },
   getyourguide:{ base: 'https://www.getyourguide.com/s/?q=', icon: 'ticket', label: 'GetYourGuide' },
 };
 
@@ -1018,56 +1021,57 @@ const SEARCH_BASES = {
 const CARRIERS = {
   southwest: {
     label: 'Southwest', logo: 'plane',
-    manageUrl: (c) => c ? `https://www.southwest.com/air/manage-reservation/?confirmationNumber=${encodeURIComponent(c)}` : 'https://mobile.southwest.com/',
+    // Clean manage-reservation landing page (opens the app on iOS; conf + last name entered there).
+    manageUrl: (c) => 'https://www.southwest.com/air/manage-reservation/',
     emailQuery: (c) => c ? `from:southwest.com ${c}` : 'from:southwest.com confirmation',
-    homeUrl: 'https://www.southwest.com/',
+    homeUrl: 'https://www.southwest.com/air/manage-reservation/',
     appName: 'Southwest app',
   },
   american: {
     label: 'American Airlines', logo: 'plane',
-    manageUrl: (c) => c ? `https://www.aa.com/reservation/find-your-reservation?recordLocator=${encodeURIComponent(c)}` : 'https://mobile.aa.com/',
+    manageUrl: (c) => 'https://www.aa.com/managetrips/findyourtrip',
     emailQuery: (c) => c ? `from:aa.com ${c}` : 'from:aa.com confirmation',
-    homeUrl: 'https://www.aa.com/',
+    homeUrl: 'https://www.aa.com/managetrips/findyourtrip',
     appName: 'American app',
   },
   virgin: {
     label: 'Virgin Atlantic', logo: 'plane',
-    manageUrl: (c) => c ? `https://www.virginatlantic.com/manage/check-in?bookingRef=${encodeURIComponent(c)}` : 'https://www.virginatlantic.com/manage/check-in',
+    manageUrl: (c) => 'https://www.virginatlantic.com/manage-booking',
     emailQuery: (c) => c ? `from:virginatlantic.com ${c}` : 'from:virginatlantic.com confirmation',
-    homeUrl: 'https://www.virginatlantic.com/',
+    homeUrl: 'https://www.virginatlantic.com/manage-booking',
     appName: 'Virgin Atlantic app',
   },
   lufthansa: {
     label: 'Lufthansa', logo: 'plane',
-    manageUrl: (c) => c ? `https://www.lufthansa.com/de/en/online-check-in?bookingCode=${encodeURIComponent(c)}` : 'https://www.lufthansa.com/de/en/online-check-in',
+    manageUrl: (c) => 'https://www.lufthansa.com/us/en/online-check-in',
     emailQuery: (c) => c ? `from:lufthansa.com ${c}` : 'from:lufthansa.com confirmation',
-    homeUrl: 'https://www.lufthansa.com/',
+    homeUrl: 'https://www.lufthansa.com/us/en/online-check-in',
     appName: 'Lufthansa app',
   },
   hyatt: {
     label: 'Hyatt', logo: 'bed',
-    manageUrl: (c) => c ? `https://www.hyatt.com/shop/find-reservation?confirmationNumber=${encodeURIComponent(c)}` : 'https://www.hyatt.com/',
+    manageUrl: (c) => 'https://www.hyatt.com/en-US/my-account/upcoming-trips',
     emailQuery: (c) => c ? `from:hyatt.com ${c}` : 'from:hyatt.com confirmation',
-    homeUrl: 'https://www.hyatt.com/',
+    homeUrl: 'https://www.hyatt.com/en-US/my-account/upcoming-trips',
     appName: 'World of Hyatt app',
   },
   marriott: {
     label: 'Marriott Bonvoy', logo: 'bed',
-    manageUrl: (c) => c ? `https://www.marriott.com/reservation/lookupReservation.mi?confirmationNumber=${encodeURIComponent(c)}` : 'https://www.marriott.com/',
+    manageUrl: (c) => 'https://www.marriott.com/loyalty/findReservationList.mi',
     emailQuery: (c) => c ? `from:marriott.com ${c}` : 'from:marriott.com confirmation',
-    homeUrl: 'https://www.marriott.com/',
+    homeUrl: 'https://www.marriott.com/loyalty/findReservationList.mi',
     appName: 'Marriott app',
   },
   airbnb: {
     label: 'Airbnb', logo: 'home',
-    manageUrl: (c) => c ? `https://www.airbnb.com/trips/v1/${encodeURIComponent(c)}` : 'https://www.airbnb.com/trips',
+    manageUrl: (c) => 'https://www.airbnb.com/trips/upcoming',
     emailQuery: (c) => c ? `from:airbnb.com ${c}` : 'from:airbnb.com reservation',
-    homeUrl: 'https://www.airbnb.com/trips',
+    homeUrl: 'https://www.airbnb.com/trips/upcoming',
     appName: 'Airbnb app',
   },
   viator: {
     label: 'Viator', logo: 'ticket',
-    manageUrl: (c) => c ? `https://www.viator.com/account/bookings` : 'https://www.viator.com/account/bookings',
+    manageUrl: (c) => 'https://www.viator.com/account/bookings',
     emailQuery: (c) => c ? `from:viator.com ${c}` : 'from:viator.com booking',
     homeUrl: 'https://www.viator.com/account/bookings',
     appName: 'Viator app',
@@ -1126,7 +1130,7 @@ function buildLinkButtons(links, opts = {}) {
     }
     if (l.type === 'search') {
       const def = SEARCH_BASES[l.on || 'google'] || SEARCH_BASES.google;
-      const q = encodeURIComponent(l.query || '');
+      const q = encodeURIComponent((l.query || '') + (def.suffix || ''));
       return `<a class="${cls}" href="${def.base}${q}" target="_blank" rel="noopener">${iconHtml(def.icon)} ${l.label || def.label}</a>`;
     }
     if (l.type === 'reserve') {
@@ -1719,7 +1723,7 @@ function renderSettings() {
     <div class="settings-row">
       <div>
         <div class="settings-name">Version</div>
-        <div class="settings-sub">Atlas v0.7</div>
+        <div class="settings-sub">Atlas v0.8</div>
       </div>
     </div>
     <div id="settings-panel-host" style="padding: 0 20px;"></div>
