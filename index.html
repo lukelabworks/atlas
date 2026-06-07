@@ -224,6 +224,50 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .reserve-btn { padding: 5px 10px; font-size: 11px; background: rgba(160, 72, 50, 0.1); border-radius: 999px; color: var(--rust-deep); border: 0.5px solid transparent; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
 .reserve-btn .icon { width: 12px; height: 12px; }
 
+/* Sub-tabs (Trip screen: Stays / Tickets) */
+.subtab-bar { display: flex; gap: 8px; padding: 0 20px 8px; }
+.subtab { flex: 1; padding: 9px; text-align: center; font-size: 13px; font-weight: 500; color: var(--muted); background: var(--paper-2); border-radius: var(--radius-sm); border: 0.5px solid var(--line-soft); }
+.subtab.active { background: var(--ink); color: var(--paper); border-color: transparent; }
+
+/* "Added by you" tag */
+.tag-mini.mine { background: rgba(21, 85, 100, 0.12); color: var(--teal-deep); border-color: transparent; }
+
+/* Add activity button (per day in itinerary) */
+.add-activity-btn { display: inline-flex; align-items: center; gap: 6px; margin: 4px 20px 0; padding: 7px 14px; font-size: 12px; font-weight: 500; color: var(--teal-deep); background: rgba(21, 85, 100, 0.08); border-radius: 999px; }
+.add-activity-btn:hover { background: rgba(21, 85, 100, 0.14); }
+.add-activity-btn .icon { width: 14px; height: 14px; }
+
+/* Form fields (add-activity modal) */
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-2); margin-bottom: 6px; }
+.form-field label .opt { color: var(--muted); font-weight: 400; }
+.form-field input, .form-field select { width: 100%; padding: 10px 12px; font-size: 15px; font-family: var(--sans); border: 0.5px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); outline: none; }
+.form-field input:focus, .form-field select:focus { border-color: var(--teal); }
+.form-row { display: flex; gap: 10px; }
+.form-row .form-field { flex: 1; }
+.form-save { width: 100%; padding: 13px; margin-top: 6px; background: var(--teal); color: var(--paper); border-radius: var(--radius-sm); font-size: 15px; font-weight: 500; }
+.form-save:hover { background: var(--teal-deep); }
+.form-delete { width: 100%; padding: 12px; margin-top: 12px; background: rgba(160, 72, 50, 0.1); color: var(--rust-deep); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.form-delete:hover { background: rgba(160, 72, 50, 0.18); }
+.form-delete .icon { width: 14px; height: 14px; }
+
+/* Ideas board */
+.idea-add { display: flex; gap: 8px; padding: 0 20px 14px; }
+.idea-add input { flex: 1; padding: 11px 14px; font-size: 15px; font-family: var(--sans); border: 0.5px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); outline: none; }
+.idea-add input:focus { border-color: var(--teal); }
+.idea-add button { width: 46px; flex-shrink: 0; background: var(--teal); color: var(--paper); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+.idea-add button:hover { background: var(--teal-deep); }
+.idea-add button .icon { width: 20px; height: 20px; }
+.idea-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+.idea-card { background: var(--paper-2); border-radius: var(--radius); padding: 14px 16px; border: 0.5px solid var(--line-soft); }
+.idea-text { font-size: 15px; color: var(--ink); line-height: 1.4; }
+.idea-actions { display: flex; gap: 8px; margin-top: 12px; }
+.idea-actions button { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; font-size: 12px; font-weight: 500; background: var(--paper); border: 0.5px solid var(--line); border-radius: 999px; color: var(--ink-2); }
+.idea-actions button:hover { background: var(--paper-3); }
+.idea-actions button .icon { width: 13px; height: 13px; }
+.idea-actions .idea-del { margin-left: auto; color: var(--rust-deep); padding: 6px 10px; }
+.idea-actions .idea-del .icon { width: 15px; height: 15px; }
+
 /* Trip switcher */
 .trip-list { padding: 0 20px; }
 .trip-item { padding: 16px; margin-bottom: 10px; background: var(--paper-2); border-radius: var(--radius); cursor: pointer; border: 1px solid transparent; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; }
@@ -340,7 +384,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .activity-meta .aud-badge.aud-teens, .alt-tags .aud-badge.aud-teens { background: var(--gold-soft); color: #8a6020; }
 .activity-meta .aud-badge.aud-adults, .alt-tags .aud-badge.aud-adults { background: var(--plum-soft); color: var(--plum); }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 
 </head>
 <body>
@@ -402,28 +445,37 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <div id="itin-host"></div>
   </div>
 
-  <!-- STAYS -->
-  <div id="screen-stays" class="screen" hidden>
+  <!-- TRIP (merged Stays + Tickets) -->
+  <div id="screen-trip" class="screen" hidden>
     <header class="app-header">
       <div class="header-row">
         <button class="trip-switch" onclick="show('trips')"><span class="badge" id="hdr-badge-3">CRO</span><span id="hdr-trip-3">Croatia · June 2026</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6l6 -6"/></svg></button>
       </div>
-      <h1 class="page-title">Stays</h1>
-      <p class="page-sub" id="stays-sub"></p>
+      <h1 class="page-title">Trip</h1>
+      <p class="page-sub" id="trip-sub">Stays, tickets &amp; confirmations</p>
     </header>
-    <div id="stays-host"></div>
+    <div class="subtab-bar">
+      <button class="subtab active" data-subtab="stays" onclick="setTripSubtab('stays')">Stays</button>
+      <button class="subtab" data-subtab="tickets" onclick="setTripSubtab('tickets')">Tickets</button>
+    </div>
+    <div id="trip-stays-host"></div>
+    <div id="trip-tickets-host" hidden></div>
   </div>
 
-  <!-- TICKETS -->
-  <div id="screen-tickets" class="screen" hidden>
+  <!-- IDEAS -->
+  <div id="screen-ideas" class="screen" hidden>
     <header class="app-header">
       <div class="header-row">
-        <button class="trip-switch" onclick="show('trips')"><span class="badge" id="hdr-badge-4">CRO</span><span id="hdr-trip-4">Croatia · June 2026</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6l6 -6"/></svg></button>
+        <button class="trip-switch" onclick="show('trips')"><span class="badge" id="hdr-badge-5">CRO</span><span id="hdr-trip-5">Croatia · June 2026</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6l6 -6"/></svg></button>
       </div>
-      <h1 class="page-title">Tickets</h1>
-      <p class="page-sub">Flights, ferries, activities</p>
+      <h1 class="page-title">Ideas</h1>
+      <p class="page-sub">Capture things to maybe do — decide later</p>
     </header>
-    <div id="tickets-host"></div>
+    <div class="idea-add">
+      <input id="idea-input" type="text" placeholder="Jot an idea… (e.g. rooftop bar in Split)" onkeydown="if(event.key==='Enter')addIdea()">
+      <button onclick="addIdea()" aria-label="Add idea"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
+    </div>
+    <div id="ideas-host"></div>
   </div>
 
   <!-- TRIPS -->
@@ -448,8 +500,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <nav class="tab-bar">
     <button class="tab active" data-tab="home" onclick="show('home')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M3 12h1"/><path d="M12 3v1"/><path d="M20 12h1"/><path d="M12 20v1"/><path d="M5.6 5.6l.7 .7"/><path d="M18.4 5.6l-.7 .7"/><path d="M17.7 17.7l.7 .7"/><path d="M5.6 18.4l.7 -.7"/></svg>Today</button>
     <button class="tab" data-tab="itinerary" onclick="show('itinerary')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M12 19h4.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h3.5"/></svg>Plan</button>
-    <button class="tab" data-tab="stays" onclick="show('stays')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 10m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M14 10l-7 7l3 3l4 -4"/><path d="M14 13l3 3"/></svg>Stays</button>
-    <button class="tab" data-tab="tickets" onclick="show('tickets')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l0 2"/><path d="M15 11l0 2"/><path d="M15 17l0 2"/><path d="M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-3a2 2 0 0 0 0 -4v-3a2 2 0 0 1 2 -2"/></svg>Tickets</button>
+    <button class="tab" data-tab="trip" onclick="show('trip')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l0 2"/><path d="M15 11l0 2"/><path d="M15 17l0 2"/><path d="M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-3a2 2 0 0 0 0 -4v-3a2 2 0 0 1 2 -2"/></svg>Trip</button>
+    <button class="tab" data-tab="ideas" onclick="show('ideas')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.5 .4 -.6 .9 -.6 1.2h-6c0 -.3 -.1 -.8 -.6 -1.2a6 6 0 0 1 3.6 -10.8z"/></svg>Ideas</button>
   </nav>
 </div>
 
@@ -485,24 +537,44 @@ const TRIPS = {
     daysInCountry: 8,
     timeOffset: '+7h',
     days: [
-      { date: '2026-06-16', dayLabel: 'Tue Jun 16', title: 'Depart Austin', location: 'Austin → Miami', wedding: false,
+      { date: '2026-06-16', dayLabel: 'Tue Jun 16', title: 'Depart Austin → Miami', location: 'Austin → Miami', wedding: false,
         activities: [
           { id: 'fly-aus-mia', time: '11:20 am', title: 'AUS → MIA', meta: 'Southwest · lands 3:10pm', icon: 'plane', color: 'teal', booked: true,
             links: [
               { type: 'search', query: 'Southwest Airlines check in', on: 'google', label: 'Check in' },
               { type: 'search', query: 'AUS airport TSA wait times', on: 'google', label: 'AUS wait times' },
             ] },
-          { id: 'hyatt-mia-1', time: 'Evening', title: 'Hyatt Place Miami Airport-West/Doral', meta: 'Check in · pool · easy dinner', icon: 'bed', color: '',
+          { id: 'hyatt-mia-1', time: '4:00 pm', title: 'Hyatt Place Miami Airport-West/Doral', meta: 'Check in · drop bags · free shuttle from MIA', icon: 'bed', color: '',
             links: [
               { type: 'map', query: 'Hyatt Place Miami Airport West Doral' },
               { type: 'url', url: 'https://www.hyatt.com/hyatt-place/en-US/miazw-hyatt-place-miami-airport-west-doral', label: 'Hotel site', icon: 'home' },
             ] },
+          { id: 'mia-southbeach', time: '5:30 pm', title: 'South Beach + Ocean Drive', meta: 'Sand, swim, people-watching · ~25 min from hotel · kid-friendly playgrounds in Lummus Park', icon: 'beach', color: 'teal', audience: 'family',
+            links: [
+              { type: 'map', query: 'Lummus Park Beach South Beach Miami' },
+              { type: 'map', query: 'Ocean Drive Miami Beach' },
+            ] },
+          { id: 'mia-dinner', time: '8:00 pm', title: 'Dinner on Lincoln Road', meta: 'Pedestrian strip, casual options for the kids', icon: 'glass', color: 'rust', audience: 'family', reserve: { name: 'Lincoln Road Miami Beach restaurants', platform: 'google' },
+            links: [
+              { type: 'map', query: 'Lincoln Road Mall Miami Beach' },
+            ] },
         ] },
-      { date: '2026-06-17', dayLabel: 'Wed Jun 17', title: 'Transit', location: 'Miami → London', wedding: false,
+      { date: '2026-06-17', dayLabel: 'Wed Jun 17', title: 'Miami → London', location: 'Miami → London', wedding: false,
         activities: [
+          { id: 'mia-breakfast', time: 'Morning', title: 'Hotel breakfast + pool', meta: 'Easy start · free breakfast at Hyatt Place', icon: 'coffee', color: '', audience: 'family' },
+          { id: 'mia-bayside', time: '11:00 am', title: 'Bayside Marketplace + skyline', meta: 'Waterfront shops · optional 90-min Biscayne Bay boat tour (~$35pp, kids love it)', icon: 'ship', color: 'teal', audience: 'family',
+            links: [
+              { type: 'map', query: 'Bayside Marketplace Miami' },
+              { type: 'search', query: 'Biscayne Bay sightseeing cruise Bayside', on: 'viator', label: 'Boat tour' },
+            ] },
+          { id: 'mia-lunch', time: '1:00 pm', title: 'Lunch in Little Havana', meta: 'Calle Ocho · Cuban food · or grab something near Bayside', icon: 'glass', color: 'rust', audience: 'family',
+            links: [
+              { type: 'map', query: 'Calle Ocho Little Havana Miami' },
+            ] },
+          { id: 'mia-checkout', time: '3:00 pm', title: 'Back to hotel → MIA', meta: 'Grab bags, shuttle to airport, allow time for international check-in', icon: 'taxi', color: '' },
           { id: 'fly-mia-lhr', time: '6:05 pm', title: 'MIA → LHR overnight', meta: 'Virgin VS0006 · lands 8:05am', icon: 'plane', color: 'teal', booked: true,
             links: [
-              { type: 'url', url: 'https://www.virginatlantic.com/manage/check-in', label: 'Virgin check in', icon: 'plane' },
+              { type: 'url', url: 'https://www.virginatlantic.com/manage-booking', label: 'Virgin check in', icon: 'plane' },
               { type: 'search', query: 'MIA airport terminal map', on: 'google', label: 'MIA map' },
             ] },
         ] },
@@ -1193,6 +1265,8 @@ let state = {
   viewingDate: null,
   // dateOverride lets us pretend "today" is some other date (for debug/testing). null = use real today.
   dateOverride: null,
+  // which subtab is active on the merged Trip screen
+  tripSubtab: 'stays',
 };
 
 /* Return today's date as YYYY-MM-DD, honoring any debug override. */
@@ -1241,10 +1315,71 @@ function saveState() {
    =========================================== */
 function trip() { return TRIPS[state.currentTrip]; }
 
+/* ===========================================
+   USER DATA — manual activities + ideas, stored in localStorage.
+   These survive app updates because they live on the device, never in
+   the source file. Keyed per trip.
+   =========================================== */
+function userKey(kind) { return `atlas-${kind}-${state.currentTrip}`; }
+
+function getManualActivities() {
+  try { return JSON.parse(localStorage.getItem(userKey('manual')) || '[]'); } catch (e) { return []; }
+}
+function saveManualActivities(list) {
+  try { localStorage.setItem(userKey('manual'), JSON.stringify(list)); } catch (e) {}
+}
+function addManualActivity(act) {
+  const list = getManualActivities();
+  act.id = 'manual-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+  act.manual = true;
+  list.push(act);
+  saveManualActivities(list);
+  return act.id;
+}
+function updateManualActivity(id, patch) {
+  const list = getManualActivities();
+  const idx = list.findIndex(a => a.id === id);
+  if (idx >= 0) { list[idx] = { ...list[idx], ...patch }; saveManualActivities(list); }
+}
+function deleteManualActivity(id) {
+  saveManualActivities(getManualActivities().filter(a => a.id !== id));
+}
+
+function getIdeas() {
+  try { return JSON.parse(localStorage.getItem(userKey('ideas')) || '[]'); } catch (e) { return []; }
+}
+function saveIdeas(list) {
+  try { localStorage.setItem(userKey('ideas'), JSON.stringify(list)); } catch (e) {}
+}
+
+/* Merge built-in + manual activities for a given day, sorted by time. */
+function activitiesForDay(day) {
+  const manual = getManualActivities().filter(a => a.date === day.date);
+  const all = [...day.activities, ...manual];
+  return all.slice().sort((a, b) => timeRank(a.time) - timeRank(b.time));
+}
+
+/* Convert a time label to a sortable number. Handles "9:00 am", "Evening", etc. */
+function timeRank(t) {
+  if (!t) return 9999;
+  const s = String(t).toLowerCase().trim();
+  const named = { dawn: 600, 'early': 630, morning: 800, 'late morning': 1030, midday: 1200, noon: 1200, afternoon: 1400, evening: 1900, sunset: 1930, night: 2100, 'all day': 1 };
+  for (const [k, v] of Object.entries(named)) if (s.includes(k)) return v;
+  const m = s.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/);
+  if (m) {
+    let h = parseInt(m[1], 10);
+    const min = m[2] ? parseInt(m[2], 10) : 0;
+    if (m[3] === 'pm' && h < 12) h += 12;
+    if (m[3] === 'am' && h === 12) h = 0;
+    return h * 100 + min;
+  }
+  return 5000;
+}
+
 function updateHeaders() {
   const t = trip();
-  ['hdr-badge','hdr-badge-2','hdr-badge-3','hdr-badge-4'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.badge; });
-  ['hdr-trip','hdr-trip-2','hdr-trip-3','hdr-trip-4'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.fullName; });
+  ['hdr-badge','hdr-badge-2','hdr-badge-3','hdr-badge-5'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.badge; });
+  ['hdr-trip','hdr-trip-2','hdr-trip-3','hdr-trip-5'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.fullName; });
 }
 
 function renderHome() {
@@ -1365,7 +1500,7 @@ function renderHome() {
 
   // Today's / viewing day's plan (filter out the activity already shown in hero, but only if isToday and hero is tomorrow)
   const planHost = document.getElementById('today-host');
-  planHost.innerHTML = day.activities.map(a => renderActivity(a, day)).join('');
+  planHost.innerHTML = activitiesForDay(day).map(a => renderActivity(a, day)).join('');
 
   // Stats — Progress
   const progEl = document.getElementById('stat-progress');
@@ -1415,6 +1550,7 @@ function renderActivity(a, day) {
   // Surface restrictive audiences on the row (family-friendly is the default, no need to badge it)
   if (a.audience === 'adults') tags.push(renderAudienceBadge('adults'));
   else if (a.audience === 'teens') tags.push(renderAudienceBadge('teens'));
+  if (a.manual) tags.push('<span class="tag-mini mine">Added by you</span>');
 
   const tappable = !!a.id;
   const clickAttr = tappable ? `onclick="openActivityDetail('${a.id}')"` : '';
@@ -1455,36 +1591,47 @@ function renderItinerary() {
         ${d.wedding ? '<span class="day-pill">Wedding</span>' : ''}
       </div>
       <div class="activity-list">
-        ${d.activities.map(a => renderActivity(a, d)).join('')}
+        ${activitiesForDay(d).map(a => renderActivity(a, d)).join('')}
       </div>
+      <button class="add-activity-btn" onclick="openAddActivity('${d.date}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add activity</button>
     </div>
   `).join('');
 }
 
+function renderTrip() {
+  updateHeaders();
+  renderStays();
+  renderTickets();
+  // Restore last-used subtab (default stays)
+  setTripSubtab(state.tripSubtab || 'stays');
+}
+
+function setTripSubtab(which) {
+  state.tripSubtab = which;
+  document.querySelectorAll('.subtab').forEach(b => b.classList.toggle('active', b.dataset.subtab === which));
+  document.getElementById('trip-stays-host').hidden = which !== 'stays';
+  document.getElementById('trip-tickets-host').hidden = which !== 'tickets';
+}
+
 function renderStays() {
   const t = trip();
-  updateHeaders();
   const lodgingCount = t.lodging?.length || 0;
   const venueCount = t.venues?.length || 0;
-  document.getElementById('stays-sub').textContent = `${lodgingCount} stays · ${venueCount} venues`;
-  const host = document.getElementById('stays-host');
+  const host = document.getElementById('trip-stays-host');
   if (!lodgingCount && !venueCount) {
     host.innerHTML = `<div class="empty"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 10m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M14 10l-7 7l3 3l4 -4"/><path d="M14 13l3 3"/></svg><div class="t">No stays yet</div><div class="s">Hotels and rentals will show here once booked.</div></div>`;
     return;
   }
 
   let html = '';
-
   if (lodgingCount) {
     html += `<div class="section-label" style="padding-top: 8px;"><span class="label">Lodging</span><span class="line"></span></div>`;
     html += t.lodging.map((l, i) => renderPlace(l, i + 1, 'rust')).join('');
   }
-
   if (venueCount) {
     html += `<div class="section-label" style="padding-top: 18px;"><span class="label">Wedding venues</span><span class="line"></span></div>`;
     html += t.venues.map((v, i) => renderPlace(v, i + 1, 'plum')).join('');
   }
-
   host.innerHTML = html;
 }
 
@@ -1509,8 +1656,7 @@ function renderPlace(l, num, color) {
 
 function renderTickets() {
   const t = trip();
-  updateHeaders();
-  const host = document.getElementById('tickets-host');
+  const host = document.getElementById('trip-tickets-host');
   const sections = Object.entries(t.tickets);
   let html = '';
   let any = false;
@@ -1610,16 +1756,6 @@ function openTicketDetail(confKey) {
     `;
   }
 
-  // QR code section
-  body += `
-    <div style="margin-top: 16px;">
-      <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Scan code</div>
-      <div id="qr-host-${confKey}">
-        ${conf ? '<div class="qr-empty">Loading QR…</div>' : '<div class="qr-empty">Add confirmation # to show a QR code</div>'}
-      </div>
-    </div>
-  `;
-
   // Confirmation editor
   body += `
     <div class="conf-edit" style="margin-top: 16px;">
@@ -1632,49 +1768,11 @@ function openTicketDetail(confKey) {
   document.getElementById('modal-body').innerHTML = body;
   document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('modal').classList.add('open');
-
-  // Render QR after the modal is in the DOM
-  if (conf) renderQR(`qr-host-${confKey}`, conf);
 }
 
 function updateConf(confKey, value) {
   const t = trip();
   setConf(t.id, confKey, value.trim());
-  // Re-render QR live
-  const host = document.getElementById(`qr-host-${confKey}`);
-  if (host) {
-    if (value.trim()) {
-      renderQR(`qr-host-${confKey}`, value.trim());
-    } else {
-      host.innerHTML = '<div class="qr-empty">Add confirmation # to show a QR code</div>';
-    }
-  }
-}
-
-function renderQR(hostId, text) {
-  const host = document.getElementById(hostId);
-  if (!host) return;
-  if (typeof qrcode === 'undefined') {
-    host.innerHTML = '<div class="qr-empty">QR library not loaded yet — check your connection</div>';
-    return;
-  }
-  try {
-    const qr = qrcode(0, 'M'); // type 0 = auto-detect size, M = medium error correction
-    qr.addData(text);
-    qr.make();
-    const svg = qr.createSvgTag({ scalable: true, margin: 2 });
-    host.innerHTML = `
-      <div class="qr-host">
-        <div style="width: 200px;">${svg}</div>
-        <div class="qr-label">${text}</div>
-      </div>
-    `;
-    // Force the SVG inside to fit
-    const svgEl = host.querySelector('svg');
-    if (svgEl) { svgEl.style.width = '100%'; svgEl.style.height = 'auto'; svgEl.style.display = 'block'; }
-  } catch (e) {
-    host.innerHTML = `<div class="qr-empty">Couldn't render QR (${e.message || 'too much data'})</div>`;
-  }
 }
 
 function renderTrips() {
@@ -1723,7 +1821,7 @@ function renderSettings() {
     <div class="settings-row">
       <div>
         <div class="settings-name">Version</div>
-        <div class="settings-sub">Atlas v0.9</div>
+        <div class="settings-sub">Atlas v1.0</div>
       </div>
     </div>
     <div id="settings-panel-host" style="padding: 0 20px;"></div>
@@ -1813,6 +1911,12 @@ function findActivity(id) {
       if (a.id === id) return { activity: a, day: d };
     }
   }
+  // Check manual activities
+  const manual = getManualActivities().find(a => a.id === id);
+  if (manual) {
+    const day = t.days.find(d => d.date === manual.date);
+    if (day) return { activity: manual, day };
+  }
   return null;
 }
 
@@ -1874,6 +1978,16 @@ function openActivityDetail(id) {
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.5 4.5l4.5 1.5l-4.5 1.5l-1.5 4.5l-1.5 -4.5l-4.5 -1.5l4.5 -1.5z"/><path d="M19 15l.6 1.8l1.8 .6l-1.8 .6l-.6 1.8l-.6 -1.8l-1.8 -.6l1.8 -.6z"/></svg>
         <div>Ask Claude for fresh ideas</div>
         <div class="sub">${hasKey ? "Based on weather, time of day, and what's already done" : 'Add your API key in Settings first'}</div>
+      </button>
+    `;
+  }
+
+  // Manual activities can be deleted
+  if (activity.manual) {
+    body += `
+      <button class="form-delete" onclick="confirmDeleteActivity('${id}')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3h6v3"/></svg>
+        Remove this activity
       </button>
     `;
   }
@@ -2124,6 +2238,163 @@ function ccPreset(val) {
   if (a) { a.value = val; ccConvert('a'); }
 }
 
+/* ===========================================
+   ADD / EDIT MANUAL ACTIVITY
+   =========================================== */
+const ACTIVITY_TYPES = [
+  { key: 'glass', label: 'Food / drink' },
+  { key: 'tour', label: 'Tour / activity' },
+  { key: 'beach', label: 'Beach' },
+  { key: 'museum', label: 'Sightseeing' },
+  { key: 'shop', label: 'Shopping' },
+  { key: 'ship', label: 'Boat' },
+  { key: 'star', label: 'Other' },
+];
+
+function openAddActivity(dateStr, prefillTitle, fromIdeaId) {
+  const t = trip();
+  document.getElementById('app').classList.add('modal-open');
+  document.getElementById('modal-head').innerHTML = `
+    <div class="eyebrow">Add to itinerary</div>
+    <div class="title">New activity</div>
+    <div class="meta">Saved on this device · survives app updates</div>
+  `;
+  const dayOptions = t.days.map(d =>
+    `<option value="${d.date}" ${d.date === dateStr ? 'selected' : ''}>${d.dayLabel} — ${d.title}</option>`
+  ).join('');
+  const typeOptions = ACTIVITY_TYPES.map(ty => `<option value="${ty.key}">${ty.label}</option>`).join('');
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-field">
+      <label>What is it?</label>
+      <input id="ma-title" type="text" value="${prefillTitle ? escapeAttr(prefillTitle) : ''}" placeholder="e.g. Sunset sailing tour">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Day</label>
+        <select id="ma-date">${dayOptions}</select>
+      </div>
+      <div class="form-field">
+        <label>Time</label>
+        <input id="ma-time" type="text" placeholder="2:00 pm / Evening">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Type</label>
+      <select id="ma-type">${typeOptions}</select>
+    </div>
+    <div class="form-field">
+      <label>Notes / details <span class="opt">(optional)</span></label>
+      <input id="ma-meta" type="text" placeholder="e.g. Booked via Viator, meet at harbor">
+    </div>
+    <div class="form-field">
+      <label>Location for map <span class="opt">(optional)</span></label>
+      <input id="ma-loc" type="text" placeholder="e.g. Carpe Diem Beach Hvar">
+    </div>
+    <div class="form-field">
+      <label>Reservation link <span class="opt">(optional)</span></label>
+      <input id="ma-reserve" type="text" placeholder="Paste a booking URL, or leave blank">
+    </div>
+    <button class="form-save" onclick="saveNewActivity('${fromIdeaId || ''}')">Add to itinerary</button>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal').classList.add('open');
+}
+
+function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
+
+function saveNewActivity(fromIdeaId) {
+  const title = document.getElementById('ma-title').value.trim();
+  if (!title) { document.getElementById('ma-title').focus(); return; }
+  const date = document.getElementById('ma-date').value;
+  const time = document.getElementById('ma-time').value.trim() || 'Anytime';
+  const type = document.getElementById('ma-type').value;
+  const meta = document.getElementById('ma-meta').value.trim();
+  const loc = document.getElementById('ma-loc').value.trim();
+  const reserve = document.getElementById('ma-reserve').value.trim();
+
+  const act = { date, time, title, meta, icon: type, color: '', audience: 'family' };
+  const links = [];
+  if (loc) links.push({ type: 'map', query: loc });
+  if (reserve) act.reserve = { platform: 'url', url: reserve };
+  if (links.length) act.links = links;
+
+  addManualActivity(act);
+  if (fromIdeaId) saveIdeas(getIdeas().filter(i => i.id !== fromIdeaId));
+
+  closeModal();
+  show(state.currentScreen === 'ideas' ? 'ideas' : 'itinerary');
+}
+
+function confirmDeleteActivity(id) {
+  deleteManualActivity(id);
+  closeModal();
+  show(state.currentScreen);
+}
+
+/* ===========================================
+   IDEAS BOARD
+   =========================================== */
+function renderIdeas() {
+  updateHeaders();
+  const ideas = getIdeas();
+  const host = document.getElementById('ideas-host');
+  if (!ideas.length) {
+    host.innerHTML = `<div class="empty"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.5 .4 -.6 .9 -.6 1.2h-6c0 -.3 -.1 -.8 -.6 -1.2a6 6 0 0 1 3.6 -10.8z"/></svg><div class="t">No ideas yet</div><div class="s">Heard about a cool spot? Jot it above. Decide later.</div></div>`;
+    return;
+  }
+  host.innerHTML = `<div class="idea-list">${ideas.map(renderIdeaCard).join('')}</div>`;
+}
+
+function renderIdeaCard(idea) {
+  return `
+    <div class="idea-card">
+      <div class="idea-text">${idea.text}</div>
+      <div class="idea-actions">
+        <button onclick="searchIdea('${idea.id}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6 -6"/></svg> Search</button>
+        <button onclick="promoteIdea('${idea.id}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add to plan</button>
+        <button class="idea-del" onclick="deleteIdea('${idea.id}')" aria-label="Delete"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3h6v3"/></svg></button>
+      </div>
+    </div>
+  `;
+}
+
+function addIdea() {
+  const input = document.getElementById('idea-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const ideas = getIdeas();
+  ideas.unshift({ id: 'idea-' + Date.now(), text });
+  saveIdeas(ideas);
+  input.value = '';
+  renderIdeas();
+}
+
+function deleteIdea(id) {
+  saveIdeas(getIdeas().filter(i => i.id !== id));
+  renderIdeas();
+}
+
+function searchIdea(id) {
+  const idea = getIdeas().find(i => i.id === id);
+  if (!idea) return;
+  const t = trip();
+  let viewIdx = (t.days || []).findIndex(d => d.date === state.viewingDate);
+  if (viewIdx < 0) viewIdx = 0;
+  const loc = t.days && t.days[viewIdx] ? (t.days[viewIdx].location || '').split('→').pop().trim() : '';
+  const q = encodeURIComponent(loc ? `${idea.text} ${loc}` : idea.text);
+  window.open(`https://www.google.com/search?q=${q}`, '_blank');
+}
+
+function promoteIdea(id) {
+  const idea = getIdeas().find(i => i.id === id);
+  if (!idea) return;
+  const t = trip();
+  let viewIdx = (t.days || []).findIndex(d => d.date === state.viewingDate);
+  if (viewIdx < 0) viewIdx = 0;
+  const dateStr = t.days && t.days[viewIdx] ? t.days[viewIdx].date : (t.days[0] && t.days[0].date);
+  openAddActivity(dateStr, idea.text, id);
+}
+
 function closeModal() {
   document.getElementById('app').classList.remove('modal-open');
   document.getElementById('modal-overlay').classList.remove('open');
@@ -2148,8 +2419,8 @@ function show(name) {
 
   if (name === 'home') renderHome();
   else if (name === 'itinerary') renderItinerary();
-  else if (name === 'stays') renderStays();
-  else if (name === 'tickets') renderTickets();
+  else if (name === 'trip') renderTrip();
+  else if (name === 'ideas') renderIdeas();
   else if (name === 'trips') renderTrips();
   else if (name === 'settings') renderSettings();
   window.scrollTo(0, 0);
