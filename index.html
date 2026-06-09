@@ -1821,7 +1821,7 @@ function renderSettings() {
     <div class="settings-row">
       <div>
         <div class="settings-name">Version</div>
-        <div class="settings-sub">Atlas v1.0</div>
+        <div class="settings-sub">Atlas v1.1</div>
       </div>
     </div>
     <div id="settings-panel-host" style="padding: 0 20px;"></div>
@@ -1879,26 +1879,72 @@ function setApiKey(k) {
 function showApiKeyPanel() {
   const host = document.getElementById('settings-panel-host');
   if (!host) return;
+  const existing = getApiKey();
+  const hasKey = !!existing;
+  // Show only a masked summary, NOT the raw key in the value attribute.
+  // Re-injecting the raw key into value="" can corrupt it on round-trip and
+  // lets a stale value get re-saved. The field starts empty; typing replaces.
+  const summary = hasKey
+    ? `A key is saved (${existing.length} chars, starts with ${escapeAttr(existing.slice(0, 7))}…).`
+    : 'No key saved yet.';
   host.innerHTML = `
     <div class="key-panel">
       <label class="lbl">Anthropic API key</label>
-      <input id="key-input" type="password" placeholder="sk-ant-..." value="${getApiKey()}">
-      <div class="note">Get one at console.anthropic.com. Stored only in this browser, never sent anywhere except Anthropic's API.</div>
+      <input id="key-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${hasKey ? 'Paste a new key to replace…' : 'sk-ant-...'}">
+      <div class="note">${summary} Get one at console.anthropic.com. Stored only in this browser, never sent anywhere except Anthropic's API.</div>
       <div class="actions">
         <button onclick="saveApiKey()">Save</button>
-        <button class="outline" onclick="clearApiKey()">Remove</button>
+        ${hasKey ? '<button class="outline" onclick="testApiKey()">Test key</button>' : ''}
+        ${hasKey ? '<button class="outline" onclick="clearApiKey()">Remove</button>' : ''}
       </div>
+      <div id="key-test-result" class="note" style="margin-top: 10px;"></div>
     </div>`;
   document.getElementById('key-input').focus();
 }
 function saveApiKey() {
-  const v = document.getElementById('key-input').value.trim();
+  const raw = document.getElementById('key-input').value;
+  // Strip whitespace, zero-width chars, and accidental wrapping quotes that
+  // phone keyboards / copy sometimes introduce.
+  const v = raw.replace(/[\s\u200B-\u200D\uFEFF]/g, '').replace(/^["']|["']$/g, '');
+  if (!v) { document.getElementById('key-input').focus(); return; }
   setApiKey(v);
   renderSettings();
+  showApiKeyPanel();
+  const r = document.getElementById('key-test-result');
+  if (r) r.textContent = `Saved (${v.length} chars). Tap "Test key" to verify it works.`;
 }
 function clearApiKey() {
   setApiKey('');
   renderSettings();
+  showApiKeyPanel();
+}
+async function testApiKey() {
+  const key = getApiKey();
+  const r = document.getElementById('key-test-result');
+  if (!key) { if (r) r.textContent = 'No key saved.'; return; }
+  if (r) r.textContent = 'Testing…';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 8, messages: [{ role: 'user', content: 'hi' }] }),
+    });
+    if (res.ok) {
+      if (r) { r.style.color = 'var(--olive)'; r.textContent = '✓ Key works! AI suggestions are ready to use.'; }
+    } else {
+      const body = await res.json().catch(() => ({}));
+      const type = body?.error?.type || res.status;
+      const msg = body?.error?.message || 'unknown error';
+      if (r) { r.style.color = 'var(--rust)'; r.textContent = `✗ ${type}: ${msg}`; }
+    }
+  } catch (e) {
+    if (r) { r.style.color = 'var(--rust)'; r.textContent = `✗ Network/CORS error: ${e.message}`; }
+  }
 }
 
 /* ===========================================
@@ -2079,7 +2125,7 @@ Respond with ONLY a JSON array of objects, no other text or markdown fences. Eac
         'anthropic-dangerous-direct-browser-access': 'true',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }],
       }),
