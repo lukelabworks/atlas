@@ -2423,11 +2423,8 @@ function deleteIdea(id) {
 function searchIdea(id) {
   const idea = getIdeas().find(i => i.id === id);
   if (!idea) return;
-  const t = trip();
-  let viewIdx = (t.days || []).findIndex(d => d.date === state.viewingDate);
-  if (viewIdx < 0) viewIdx = 0;
-  const loc = t.days && t.days[viewIdx] ? (t.days[viewIdx].location || '').split('→').pop().trim() : '';
-  const q = encodeURIComponent(loc ? `${idea.text} ${loc}` : idea.text);
+  // Search exactly what the user typed — they usually include the place themselves.
+  const q = encodeURIComponent(idea.text);
   window.open(`https://www.google.com/search?q=${q}`, '_blank');
 }
 
