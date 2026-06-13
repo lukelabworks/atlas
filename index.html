@@ -369,6 +369,29 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .empty .icon { width: 36px; height: 36px; opacity: 0.4; margin: 0 auto 10px; display: block; }
 .empty .t { font-family: var(--serif); font-size: 18px; color: var(--ink-2); margin-bottom: 6px; }
 .empty .s { font-size: 13px; }
+.pack-progress { padding: 0 20px 12px; }
+.pack-progress-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+.pack-progress-top #pack-prog-pct { font-family: var(--mono); font-size: 13px; color: var(--teal); }
+.pack-bar { height: 5px; background: var(--paper-3); border-radius: 999px; overflow: hidden; }
+.pack-bar-fill { height: 100%; background: var(--teal); border-radius: 999px; transition: width 0.3s ease; }
+.pack-reset-row { padding: 18px 20px 8px; display: flex; justify-content: center; }
+.pack-cat { padding: 0 20px; margin-bottom: 6px; }
+.pack-list { padding: 0 20px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
+.pack-item { display: flex; align-items: flex-start; gap: 11px; background: var(--paper-2); border: 0.5px solid var(--line-soft); border-radius: var(--radius); padding: 12px 14px; }
+.pack-check { width: 20px; height: 20px; min-width: 20px; border: 1.5px solid var(--line); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.15s; background: var(--paper); }
+.pack-check .icon { width: 13px; height: 13px; color: var(--paper); opacity: 0; }
+.pack-item.done .pack-check { background: var(--teal); border-color: var(--teal); }
+.pack-item.done .pack-check .icon { opacity: 1; }
+.pack-item.done .pack-label { color: var(--muted-2); text-decoration: line-through; }
+.pack-body { flex: 1; min-width: 0; }
+.pack-label { font-size: 15px; color: var(--ink); line-height: 1.35; }
+.pack-tag { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 1px 6px; border-radius: 999px; margin-left: 7px; vertical-align: middle; }
+.pack-tag-have { background: var(--olive-soft); color: var(--olive); }
+.pack-tag-add { background: var(--gold-soft); color: var(--gold); }
+.pack-note { font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 3px; }
+.pack-del { flex-shrink: 0; color: var(--muted-2); padding: 2px; margin: -2px -4px 0 0; }
+.pack-del .icon { width: 16px; height: 16px; }
+.pack-del:hover { color: var(--rust-deep); }
 
 /* SVG icon base — sized to match the surrounding font-size */
 .icon { width: 1em; height: 1em; flex-shrink: 0; display: inline-block; vertical-align: -0.15em; }
@@ -478,6 +501,27 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <div id="ideas-host"></div>
   </div>
 
+  <!-- PACK -->
+  <div id="screen-pack" class="screen" hidden>
+    <header class="app-header">
+      <div class="header-row">
+        <button class="trip-switch" onclick="show('trips')"><span class="badge" id="hdr-badge-6">CRO</span><span id="hdr-trip-6">Croatia · June 2026</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6l6 -6"/></svg></button>
+      </div>
+      <h1 class="page-title">Pack</h1>
+      <p class="page-sub">Carry-on capsule + essentials · tap to check off</p>
+    </header>
+    <div class="pack-progress">
+      <div class="pack-progress-top"><span id="pack-prog-label">0 of 0 packed</span><span id="pack-prog-pct">0%</span></div>
+      <div class="pack-bar"><div class="pack-bar-fill" id="pack-bar-fill" style="width:0%"></div></div>
+    </div>
+    <div class="idea-add">
+      <input id="pack-input" type="text" placeholder="Add an item… (e.g. portable fan)" onkeydown="if(event.key==='Enter')addPackItem()">
+      <button onclick="addPackItem()" aria-label="Add item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
+    </div>
+    <div id="pack-host"></div>
+    <div class="pack-reset-row"><button class="btn-mini" onclick="resetPack()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg> Reset list</button></div>
+  </div>
+
   <!-- TRIPS -->
   <div id="screen-trips" class="screen" hidden>
     <header class="app-header">
@@ -502,6 +546,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <button class="tab" data-tab="itinerary" onclick="show('itinerary')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M12 19h4.5a3.5 3.5 0 0 0 0 -7h-8a3.5 3.5 0 0 1 0 -7h3.5"/></svg>Plan</button>
     <button class="tab" data-tab="trip" onclick="show('trip')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l0 2"/><path d="M15 11l0 2"/><path d="M15 17l0 2"/><path d="M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-3a2 2 0 0 0 0 -4v-3a2 2 0 0 1 2 -2"/></svg>Trip</button>
     <button class="tab" data-tab="ideas" onclick="show('ideas')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 3.6 10.8c-.5 .4 -.6 .9 -.6 1.2h-6c0 -.3 -.1 -.8 -.6 -1.2a6 6 0 0 1 3.6 -10.8z"/></svg>Ideas</button>
+    <button class="tab" data-tab="pack" onclick="show('pack')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/><path d="M9 7v-2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2"/><path d="M12 11l0 5"/><path d="M10 13l4 0"/></svg>Pack</button>
   </nav>
 </div>
 
@@ -1352,6 +1397,199 @@ function saveIdeas(list) {
   try { localStorage.setItem(userKey('ideas'), JSON.stringify(list)); } catch (e) {}
 }
 
+/* ===========================================
+   PACKING — curated carry-on capsule + essentials.
+   Check-off state, custom items, and hidden defaults persist
+   per trip in localStorage, surviving app updates.
+   =========================================== */
+const DEFAULT_PACKING = [
+  { cat: "Tops", items: [
+    { id: "pack-top-wedshirt", label: "White cotton/linen blend shirt", tag: "have", note: "Wedding shirt + dresses up a nice dinner." },
+    { id: "pack-top-ltblue", label: "Light blue SS linen shirt", tag: "have", note: "Welcome-drinks shirt under the jacket; daytime staple." },
+    { id: "pack-top-white", label: "White SS linen shirt", tag: "have", note: "Beach/boat overshirt + casual dinners." },
+    { id: "pack-top-navy", label: "Navy SS linen shirt", tag: "have", note: "Travel-day shirt — hides wrinkles." },
+    { id: "pack-top-blackpolo", label: "Black textured knit polo", tag: "have", note: "Smart-casual dinner with blue chinos + loafers." },
+    { id: "pack-top-creampolo", label: "Cream polo", tag: "have", note: "Easygoing casual dinners + sightseeing." },
+    { id: "pack-top-tees", label: "Performance / merino tees — 3", tag: "add", note: "Rafting, Klis, e-bike; base layers + sleep. Dry overnight." },
+    { id: "pack-top-beater", label: "Beater tee for rafting — 1", tag: "add", note: "Cetina soaks + muddies it; leave behind in Split." }
+  ]},
+  { cat: "Bottoms", items: [
+    { id: "pack-bot-bluechino", label: "Blue chinos", tag: "have", note: "Dinner workhorse — pairs with every top + loafers." },
+    { id: "pack-bot-khakichino", label: "Khaki chinos", tag: "have", note: "Hotter-day alternative; backup trouser." },
+    { id: "pack-bot-linenshorts", label: "Khaki linen shorts", tag: "have", note: "Daily heat default." },
+    { id: "pack-bot-golfshorts", label: "Black golf shorts", tag: "have", note: "Active short — rafting, Klis, e-bike." },
+    { id: "pack-bot-suittrouser", label: "Olive linen suit trousers", tag: "have", note: "Part of the suit; also solo with a linen shirt." }
+  ]},
+  { cat: "Suit & formal", items: [
+    { id: "pack-suit-jacket", label: "Olive linen suit jacket", tag: "have", note: "Hangs in the HeyBay garment compartment." },
+    { id: "pack-suit-tie", label: "Knit tie — optional", tag: "add", note: "Confirm dress code with the couple. Carry in the Nomatic." },
+    { id: "pack-suit-square", label: "Pocket square — optional", tag: "add", note: "Weightless; finishes the ceremony jacket." }
+  ]},
+  { cat: "Shoes", items: [
+    { id: "pack-shoe-loafers", label: "Stone loafers", tag: "have", note: "Wedding + nice dinners; sockless with linen." },
+    { id: "pack-shoe-sandals", label: "Leather sandals", tag: "add", note: "80% of the trip; wear on the plane." },
+    { id: "pack-shoe-sneakers", label: "Walking sneakers", tag: "add", note: "Klis, sightseeing; closed-toe for rafting." },
+    { id: "pack-shoe-water", label: "Water shoes", tag: "add", note: "Non-negotiable — rocky beaches." }
+  ]},
+  { cat: "Swim & sun", items: [
+    { id: "pack-sun-trunks", label: "Swim trunks — 2", tag: "add", note: "Rotate one drying while you wear the other." },
+    { id: "pack-sun-rash", label: "Rashguard — 1", tag: "add", note: "Boat day = 6+ hrs of direct sun." },
+    { id: "pack-sun-hat", label: "Cap or packable hat", tag: "add", note: "High UV; ~13 hrs sun/day on Hvar." },
+    { id: "pack-sun-shades", label: "Polarized sunglasses", tag: "add", note: "Glare off the water on the catamaran." }
+  ]},
+  { cat: "Accessories & basics", items: [
+    { id: "pack-acc-belt", label: "Tan/brown leather belt", tag: "add", note: "Works with loafers + all chinos." },
+    { id: "pack-acc-underwear", label: "Underwear — 7–8", tag: "add", note: "" },
+    { id: "pack-acc-socks", label: "No-show socks — 2–3", tag: "add", note: "For sneakers; sockless otherwise." },
+    { id: "pack-acc-sleep", label: "Sleep shirt + shorts", tag: "add", note: "Or sleep in a tee + golf shorts." },
+    { id: "pack-acc-towel", label: "Microfiber travel towel", tag: "add", note: "Boat days + Pakleni." }
+  ]},
+  { cat: "Toiletries", items: [
+    { id: "pack-toi-tooth", label: "Toothbrush + travel toothpaste", tag: null, note: "" },
+    { id: "pack-toi-deo", label: "Deodorant", tag: null, note: "" },
+    { id: "pack-toi-hair", label: "Shampoo/conditioner + body wash", tag: null, note: "Amfora has basics; Split Airbnb may not." },
+    { id: "pack-toi-shave", label: "Razor + travel shaving cream", tag: null, note: "" },
+    { id: "pack-toi-sun", label: "Sunscreen SPF 50+", tag: null, note: "Bring a starter; buy a big bottle in Split." },
+    { id: "pack-toi-lip", label: "Lip balm with SPF", tag: null, note: "" },
+    { id: "pack-toi-groom", label: "Comb/brush + hair product", tag: null, note: "" },
+    { id: "pack-toi-cologne", label: "Cologne (small decant)", tag: null, note: "" },
+    { id: "pack-toi-clip", label: "Nail clippers, tweezers", tag: null, note: "" }
+  ]},
+  { cat: "Documents", items: [
+    { id: "pack-doc-passport", label: "Passport", tag: null, note: "Valid 6+ months past June 28." },
+    { id: "pack-doc-flights", label: "Flight confirmations — all 3 reservations", tag: null, note: "Printed + digital, every leg." },
+    { id: "pack-doc-hotels", label: "Hotel + Airbnb confirmations", tag: null, note: "Hyatt MIA, Split Airbnb, Amfora, Sheraton LHR." },
+    { id: "pack-doc-krilo", label: "Krilo catamaran tickets — both legs", tag: null, note: "" },
+    { id: "pack-doc-raft", label: "Cetina rafting Viator confirmation", tag: null, note: "" },
+    { id: "pack-doc-wedding", label: "Wedding details card", tag: null, note: "Venues, times, dress codes." },
+    { id: "pack-doc-insurance", label: "Travel insurance doc + emergency number", tag: null, note: "" },
+    { id: "pack-doc-scan", label: "Scan everything to a shared cloud folder", tag: null, note: "Share with Christy before you leave." }
+  ]},
+  { cat: "Money & cards", items: [
+    { id: "pack-money-sapphire", label: "Chase Sapphire (no FX fee)", tag: null, note: "" },
+    { id: "pack-money-backup", label: "Backup card — different network", tag: null, note: "" },
+    { id: "pack-money-cash", label: "€200–300 cash", tag: null, note: "Croatia uses the euro." },
+    { id: "pack-money-notify", label: "Notify banks: Croatia + UK, Jun 16–28", tag: null, note: "" },
+    { id: "pack-money-wallet", label: "Slim travel wallet", tag: null, note: "" }
+  ]},
+  { cat: "Electronics & power", items: [
+    { id: "pack-elec-phone", label: "Phone + charging cable", tag: null, note: "" },
+    { id: "pack-elec-adapter", label: "EU Type C plug adapters — 2+", tag: "add", note: "Buy before you go, not at the airport." },
+    { id: "pack-elec-brick", label: "Multi-port USB-C GaN charger", tag: "add", note: "One brick; handles 220V." },
+    { id: "pack-elec-bank", label: "Battery bank (20,000 mAh)", tag: "add", note: "Travel days are 20+ hrs." },
+    { id: "pack-elec-head", label: "Noise-canceling headphones", tag: null, note: "" },
+    { id: "pack-elec-pouch", label: "Waterproof phone pouch", tag: "add", note: "Rafting + boat day." },
+    { id: "pack-elec-offline", label: "Download offline maps + entertainment", tag: null, note: "Split + Hvar, before leaving Austin." },
+    { id: "pack-elec-plan", label: "Confirm international phone plan", tag: null, note: "T-Mobile incl. Croatia; AT&T/Verizon ~$10/day." }
+  ]},
+  { cat: "Health & meds", items: [
+    { id: "pack-med-rx", label: "Prescriptions (+ a few extra days)", tag: null, note: "" },
+    { id: "pack-med-pain", label: "Ibuprofen + Tylenol", tag: null, note: "" },
+    { id: "pack-med-bonine", label: "Bonine for Christy", tag: "add", note: "Less drowsy than Dramamine; take 1 hr before the catamaran." },
+    { id: "pack-med-stomach", label: "Imodium + antacid", tag: null, note: "" },
+    { id: "pack-med-anti", label: "Antihistamine", tag: null, note: "" },
+    { id: "pack-med-blister", label: "Blister bandages (Compeed)", tag: null, note: "New sandals + cobblestones." },
+    { id: "pack-med-aloe", label: "Aloe / after-sun gel", tag: null, note: "" },
+    { id: "pack-med-kit", label: "Mini first aid kit", tag: null, note: "" },
+    { id: "pack-med-mel", label: "Melatonin", tag: null, note: "8–9 hr time shift from Austin." },
+    { id: "pack-med-bug", label: "Insect repellent", tag: null, note: "Evenings near lavender fields + docks." },
+    { id: "pack-med-sanitizer", label: "Hand sanitizer", tag: null, note: "" }
+  ]},
+  { cat: "Packing aids", items: [
+    { id: "pack-aid-cubes", label: "Packing cubes", tag: "add", note: "The Nomatic is a black hole without them." },
+    { id: "pack-aid-dry", label: "Dry bags — 10L + 5L", tag: "add", note: "Rafting + boat day." },
+    { id: "pack-aid-laundry", label: "Laundry bag", tag: "add", note: "Mid-trip wash at Amfora." },
+    { id: "pack-aid-ziploc", label: "A few zip-locks", tag: "add", note: "Wet swimwear + snacks." }
+  ]}
+];
+
+function getPackState() {
+  try { return JSON.parse(localStorage.getItem(userKey('pack')) || '{}'); } catch (e) { return {}; }
+}
+function savePackState(s) {
+  try { localStorage.setItem(userKey('pack'), JSON.stringify(s)); } catch (e) {}
+}
+function packCategories() {
+  const st = getPackState();
+  const hidden = st.hidden || {};
+  const custom = st.custom || [];
+  const cats = DEFAULT_PACKING.map(c => ({ cat: c.cat, items: c.items.filter(it => !hidden[it.id]) }));
+  if (custom.length) {
+    const map = {};
+    custom.forEach(it => { (map[it.cat] = map[it.cat] || []).push(it); });
+    Object.keys(map).forEach(name => {
+      const existing = cats.find(c => c.cat === name);
+      if (existing) existing.items = existing.items.concat(map[name]);
+      else cats.push({ cat: name, items: map[name] });
+    });
+  }
+  return cats.filter(c => c.items.length);
+}
+function renderPack() {
+  updateHeaders();
+  const st = getPackState();
+  const checked = st.checked || {};
+  const cats = packCategories();
+  const host = document.getElementById('pack-host');
+  let total = 0, done = 0, html = '';
+  cats.forEach(c => {
+    html += `<div class="section-label pack-cat"><span class="label">${c.cat}</span><span class="line"></span></div><div class="pack-list">`;
+    c.items.forEach(it => {
+      total++;
+      const isDone = !!checked[it.id];
+      if (isDone) done++;
+      const tag = it.tag === 'have' ? '<span class="pack-tag pack-tag-have">have</span>'
+                : it.tag === 'add' ? '<span class="pack-tag pack-tag-add">add</span>' : '';
+      html += `<div class="pack-item${isDone ? ' done' : ''}">
+        <div class="pack-check" onclick="togglePackItem('${it.id}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l9 -9"/></svg></div>
+        <div class="pack-body" onclick="togglePackItem('${it.id}')"><div class="pack-label">${it.label}${tag}</div>${it.note ? `<div class="pack-note">${it.note}</div>` : ''}</div>
+        <button class="pack-del" onclick="deletePackItem('${it.id}')" aria-label="Remove item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></svg></button>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  host.innerHTML = html;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('pack-prog-label').textContent = `${done} of ${total} packed`;
+  document.getElementById('pack-prog-pct').textContent = pct + '%';
+  document.getElementById('pack-bar-fill').style.width = pct + '%';
+}
+function togglePackItem(id) {
+  const st = getPackState();
+  st.checked = st.checked || {};
+  if (st.checked[id]) delete st.checked[id]; else st.checked[id] = true;
+  savePackState(st);
+  renderPack();
+}
+function addPackItem() {
+  const input = document.getElementById('pack-input');
+  const val = (input.value || '').trim();
+  if (!val) return;
+  const st = getPackState();
+  st.custom = st.custom || [];
+  st.custom.push({ id: 'pack-custom-' + Date.now(), label: val, note: '', tag: 'add', cat: 'My additions' });
+  savePackState(st);
+  input.value = '';
+  renderPack();
+}
+function deletePackItem(id) {
+  const st = getPackState();
+  if (id.indexOf('pack-custom-') === 0) {
+    st.custom = (st.custom || []).filter(it => it.id !== id);
+  } else {
+    st.hidden = st.hidden || {};
+    st.hidden[id] = true;
+  }
+  if (st.checked) delete st.checked[id];
+  savePackState(st);
+  renderPack();
+}
+function resetPack() {
+  if (!confirm('Reset the packing list? This clears your check-offs, custom items, and restores all default items.')) return;
+  savePackState({});
+  renderPack();
+}
+
 /* Merge built-in + manual activities for a given day, sorted by time. */
 function activitiesForDay(day) {
   const manual = getManualActivities().filter(a => a.date === day.date);
@@ -1378,8 +1616,8 @@ function timeRank(t) {
 
 function updateHeaders() {
   const t = trip();
-  ['hdr-badge','hdr-badge-2','hdr-badge-3','hdr-badge-5'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.badge; });
-  ['hdr-trip','hdr-trip-2','hdr-trip-3','hdr-trip-5'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.fullName; });
+  ['hdr-badge','hdr-badge-2','hdr-badge-3','hdr-badge-5','hdr-badge-6'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.badge; });
+  ['hdr-trip','hdr-trip-2','hdr-trip-3','hdr-trip-5','hdr-trip-6'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = t.fullName; });
 }
 
 function renderHome() {
@@ -2464,6 +2702,7 @@ function show(name) {
   else if (name === 'itinerary') renderItinerary();
   else if (name === 'trip') renderTrip();
   else if (name === 'ideas') renderIdeas();
+  else if (name === 'pack') renderPack();
   else if (name === 'trips') renderTrips();
   else if (name === 'settings') renderSettings();
   window.scrollTo(0, 0);
