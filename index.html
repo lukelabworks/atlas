@@ -392,6 +392,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .pack-del { flex-shrink: 0; color: var(--muted-2); padding: 2px; margin: -2px -4px 0 0; }
 .pack-del .icon { width: 16px; height: 16px; }
 .pack-del:hover { color: var(--rust-deep); }
+.outfit-intro { padding: 4px 20px 14px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.outfit-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
+.outfit-card { background: var(--paper-2); border: 0.5px solid var(--line-soft); border-radius: var(--radius); padding: 13px 15px; }
+.outfit-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+.outfit-num { font-family: var(--mono); font-size: 11px; color: var(--teal); background: var(--paper); border: 0.5px solid var(--line); border-radius: 999px; width: 22px; height: 22px; min-width: 22px; display: inline-flex; align-items: center; justify-content: center; }
+.outfit-name { font-family: var(--serif); font-size: 16px; color: var(--ink); font-weight: 600; line-height: 1.2; }
+.outfit-formula { font-size: 14px; color: var(--ink-2); line-height: 1.45; }
+.outfit-shoes { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 7px; }
+.outfit-shoes .icon { width: 14px; height: 14px; flex-shrink: 0; }
+.outfit-note { font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 7px; font-style: italic; }
 
 /* SVG icon base — sized to match the surrounding font-size */
 .icon { width: 1em; height: 1em; flex-shrink: 0; display: inline-block; vertical-align: -0.15em; }
@@ -508,8 +518,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         <button class="trip-switch" onclick="show('trips')"><span class="badge" id="hdr-badge-6">CRO</span><span id="hdr-trip-6">Croatia · June 2026</span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6l6 -6"/></svg></button>
       </div>
       <h1 class="page-title">Pack</h1>
-      <p class="page-sub">Carry-on capsule + essentials · tap to check off</p>
+      <p class="page-sub">Carry-on capsule, essentials &amp; outfits</p>
     </header>
+    <div class="subtab-bar">
+      <button class="subtab active" data-packsubtab="checklist" onclick="setPackSubtab('checklist')">Checklist</button>
+      <button class="subtab" data-packsubtab="outfits" onclick="setPackSubtab('outfits')">Outfits</button>
+    </div>
+    <div id="pack-checklist-host">
     <div class="pack-progress">
       <div class="pack-progress-top"><span id="pack-prog-label">0 of 0 packed</span><span id="pack-prog-pct">0%</span></div>
       <div class="pack-bar"><div class="pack-bar-fill" id="pack-bar-fill" style="width:0%"></div></div>
@@ -520,6 +535,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </div>
     <div id="pack-host"></div>
     <div class="pack-reset-row"><button class="btn-mini" onclick="resetPack()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg> Reset list</button></div>
+    </div>
+    <div id="pack-outfits-host" hidden></div>
   </div>
 
   <!-- TRIPS -->
@@ -844,15 +861,15 @@ const TRIPS = {
               { type: 'url', url: 'https://www.lufthansa.com/de/en/online-check-in', label: 'Lufthansa check in', icon: 'plane' },
               { type: 'map', query: 'Split Airport SPU' },
             ] },
-          { id: 'sheraton-lhr', time: 'Late', title: 'Sheraton Skyline LHR', meta: 'Hoppa H3 £5/pp from terminals', icon: 'bed', color: '',
+          { id: 'sheraton-lhr', time: 'Late', title: 'London Heathrow Marriott', meta: 'Hoppa H3 £5/pp from terminals', icon: 'bed', color: '',
             links: [
-              { type: 'map', query: 'Sheraton Skyline Hotel London Heathrow' },
-              { type: 'url', url: 'https://www.marriott.com/en-us/hotels/lhrhs-sheraton-skyline-hotel-london-heathrow/overview/', label: 'Hotel site', icon: 'home' },
+              { type: 'map', query: 'London Heathrow Marriott Hotel Bath Road' },
+              { type: 'url', url: 'https://www.marriott.com/en-us/hotels/lhrhr-london-heathrow-marriott-hotel/overview/', label: 'Hotel site', icon: 'home' },
             ] },
         ] },
       { date: '2026-06-27', dayLabel: 'Sat Jun 27', title: 'London layover', location: 'London → Miami', wedding: false,
         activities: [
-          { id: 'london-day', time: 'Morning', title: 'Optional Windsor or Kew', meta: "Or rest day at the Sheraton", icon: 'fortress', color: 'gold',
+          { id: 'london-day', time: 'Morning', title: 'Optional Windsor or Kew', meta: "Or rest day at the Marriott", icon: 'fortress', color: 'gold',
             links: [
               { type: 'url', url: 'https://www.rct.uk/visit/windsor-castle', label: 'Windsor Castle', icon: 'fortress' },
               { type: 'url', url: 'https://www.kew.org/kew-gardens', label: 'Kew Gardens', icon: 'tree' },
@@ -863,9 +880,9 @@ const TRIPS = {
                   { type: 'url', url: 'https://www.britishmuseum.org/', label: 'Official site', icon: 'building' },
                   { type: 'map', query: 'British Museum London' },
                 ] },
-              { name: 'Sleep in, hotel breakfast, gym', desc: 'After 11 days of travel, a real rest day is gold. Pool at Sheraton.', tags: ['Rest','Low effort'],
+              { name: 'Sleep in, hotel breakfast, gym', desc: 'After 11 days of travel, a real rest day is gold. Pool at the Marriott.', tags: ['Rest','Low effort'],
                 links: [
-                  { type: 'map', query: 'Sheraton Skyline Hotel London Heathrow' },
+                  { type: 'map', query: 'London Heathrow Marriott Hotel Bath Road' },
                 ] },
             ] },
           { id: 'lhr-mia', time: '3:50 pm', title: 'LHR → MIA', meta: 'Virgin VS0117 · lands 8:45pm', icon: 'plane', color: 'teal', booked: true,
@@ -891,7 +908,7 @@ const TRIPS = {
       { name: 'Hyatt Place Miami Airport-West/Doral', address: 'Miami, FL', dates: 'Wed Jun 17 · 1 night', notes: 'Chase → Hyatt points · award booking · free breakfast.', mapsQuery: 'Hyatt Place Miami Airport West Doral' },
       { name: 'Million Dollar View4you', address: 'Obala kneza Branimira 4, Split', dates: 'Thu Jun 18 → Sun Jun 21 · 3 nights', notes: 'Airbnb #HM8CZBJ4TQ · waterfront Riva location.', mapsQuery: 'Obala kneza Branimira 4 Split' },
       { name: 'Amfora Hvar Grand Beach Resort', address: 'Ul. biskupa Jurja Dubrokovica 5, Hvar', dates: 'Sun Jun 21 → Fri Jun 26 · 5 nights', notes: 'Wedding home base. 5 min walk from town.', mapsQuery: 'Amfora Hvar Grand Beach Resort' },
-      { name: 'Sheraton Skyline LHR', address: 'Bath Road, London Heathrow', dates: 'Fri Jun 26 · 1 night', notes: 'Marriott Bonvoy. Hoppa H3 £5/pp to terminals.', mapsQuery: 'Sheraton Skyline Hotel London Heathrow' },
+      { name: 'London Heathrow Marriott', address: 'Bath Road, Hayes, London Heathrow UB3 5AN', dates: 'Fri Jun 26 · 1 night · 2 rooms', notes: 'Moved from the Sheraton Skyline. Booked via Chase Travel (cash, not points). New confirmation #s pending. Hoppa H3 £5/pp to terminals.', mapsQuery: 'London Heathrow Marriott Hotel Bath Road' },
       { name: 'Hyatt Place Miami Airport-East', address: '3549 NW Le Jeune Road, Miami, FL 33142', dates: 'Sat Jun 27 · 1 night', notes: 'Different property than outbound · valet/self-park $25/day · +1 305 667 1003', mapsQuery: 'Hyatt Place Miami Airport East 3549 NW Le Jeune Road' },
     ],
     venues: [
@@ -912,8 +929,8 @@ const TRIPS = {
         { confKey: 'hyatt-mia-1', carrier: 'hyatt', name: 'Hyatt Place Miami Airport-West/Doral', route: 'Wed Jun 17', sub: '1 night · Chase → Hyatt points', date: '2026-06-17', defaultConf: '40023B18032976' },
         { confKey: 'airbnb-split', carrier: 'airbnb', name: 'Million Dollar View4you', route: 'Split · Riva', sub: 'Thu Jun 18 → Sun Jun 21 · 3 nights', date: '2026-06-18', defaultConf: 'HM8CZBJ4TQ' },
         { confKey: 'amfora-hvar', carrier: 'marriott', name: 'Amfora Hvar Grand Beach', route: 'Hvar', sub: 'Sun Jun 21 → Fri Jun 26 · 5 nights', date: '2026-06-21', defaultConf: '' },
-        { confKey: 'sheraton-lhr-a', carrier: 'marriott', name: 'Sheraton Skyline LHR · Room 1', route: 'London Heathrow', sub: 'Fri Jun 26 · 1 night · Marriott Bonvoy', date: '2026-06-26', defaultConf: '78459328' },
-        { confKey: 'sheraton-lhr-b', carrier: 'marriott', name: 'Sheraton Skyline LHR · Room 2', route: 'London Heathrow', sub: 'Fri Jun 26 · 1 night · Marriott Bonvoy', date: '2026-06-26', defaultConf: '78467256' },
+        { confKey: 'sheraton-lhr-a', carrier: 'chase', name: 'London Heathrow Marriott · Room 1', route: 'London Heathrow', sub: 'Fri Jun 26 · 1 night · Chase Travel', date: '2026-06-26', defaultConf: '' },
+        { confKey: 'sheraton-lhr-b', carrier: 'chase', name: 'London Heathrow Marriott · Room 2', route: 'London Heathrow', sub: 'Fri Jun 26 · 1 night · Chase Travel', date: '2026-06-26', defaultConf: '' },
         { confKey: 'hyatt-mia-2', carrier: 'hyatt', name: 'Hyatt Place Miami Airport-East', route: 'Sat Jun 27', sub: '1 night · 3549 NW Le Jeune Road · Award Cat 3', date: '2026-06-27', defaultConf: '40023B18909624' },
       ],
       Ferries: [
@@ -1178,6 +1195,13 @@ const CARRIERS = {
     emailQuery: (c) => c ? `from:marriott.com ${c}` : 'from:marriott.com confirmation',
     homeUrl: 'https://www.marriott.com/loyalty/findReservationList.mi',
     appName: 'Marriott app',
+  },
+  chase: {
+    label: 'Chase Travel', logo: 'bed',
+    manageUrl: (c) => 'https://travel.chase.com/',
+    emailQuery: (c) => c ? `from:chase.com ${c}` : 'from:chase.com OR from:chasetravel.com confirmation',
+    homeUrl: 'https://travel.chase.com/',
+    appName: 'Chase Travel',
   },
   airbnb: {
     label: 'Airbnb', logo: 'home',
@@ -1458,7 +1482,7 @@ const DEFAULT_PACKING = [
   { cat: "Documents", items: [
     { id: "pack-doc-passport", label: "Passport", tag: null, note: "Valid 6+ months past June 28." },
     { id: "pack-doc-flights", label: "Flight confirmations — all 3 reservations", tag: null, note: "Printed + digital, every leg." },
-    { id: "pack-doc-hotels", label: "Hotel + Airbnb confirmations", tag: null, note: "Hyatt MIA, Split Airbnb, Amfora, Sheraton LHR." },
+    { id: "pack-doc-hotels", label: "Hotel + Airbnb confirmations", tag: null, note: "Hyatt MIA, Split Airbnb, Amfora, Marriott LHR." },
     { id: "pack-doc-krilo", label: "Krilo catamaran tickets — both legs", tag: null, note: "" },
     { id: "pack-doc-raft", label: "Cetina rafting Viator confirmation", tag: null, note: "" },
     { id: "pack-doc-wedding", label: "Wedding details card", tag: null, note: "Venues, times, dress codes." },
@@ -1553,6 +1577,7 @@ function renderPack() {
   document.getElementById('pack-prog-label').textContent = `${done} of ${total} packed`;
   document.getElementById('pack-prog-pct').textContent = pct + '%';
   document.getElementById('pack-bar-fill').style.width = pct + '%';
+  setPackSubtab(state.packSubtab || 'checklist');
 }
 function togglePackItem(id) {
   const st = getPackState();
@@ -1588,6 +1613,64 @@ function resetPack() {
   if (!confirm('Reset the packing list? This clears your check-offs, custom items, and restores all default items.')) return;
   savePackState({});
   renderPack();
+}
+
+/* OUTFITS — 20 looks built from the packed kit. Static reference. */
+const OUTFITS = [
+  { group: "Wedding & evening", looks: [
+    { n: 1, name: "Ceremony — formal", fit: "Sage linen suit + linen-cotton wedding shirt", shoes: "Suede slip-ons", note: "Optional knit tie + pocket square. Steam it the night before." },
+    { n: 2, name: "Welcome drinks — cocktail", fit: "Sage suit jacket + light blue linen shirt (open collar) + khaki chinos", shoes: "Suede slip-ons", note: "Relaxed cocktail — the jacket does the work, no tie needed." },
+    { n: 3, name: "Nightclub", fit: "Navy linen shirt, sleeves rolled & untucked + navy chinos", shoes: "P448", note: "Tonal navy with the white sneaker popping. Carpe Diem / Hula Hula." },
+    { n: 4, name: "Nightclub — elevated", fit: "Sage suit jacket + black knit polo + navy chinos", shoes: "P448", note: "A dressier club look without committing to the full suit." },
+    { n: 5, name: "Dressy dinner", fit: "Black knit polo + navy chinos", shoes: "P448", note: "Sharp smart-casual; the white sneaker keeps it modern." }
+  ]},
+  { group: "Smart-casual dinners", looks: [
+    { n: 6, name: "Relaxed dinner", fit: "Light blue linen shirt + khaki chinos", shoes: "Suede slip-ons or Birkenstocks", note: "" },
+    { n: 7, name: "Linen dinner", fit: "Linen-cotton shirt + navy chinos", shoes: "Suede slip-ons", note: "Your wedding shirt, off-duty." },
+    { n: 8, name: "Resort evening", fit: "Cream polo + olive chinos", shoes: "Suede slip-ons", note: "Earthy tonal — cream over olive." },
+    { n: 9, name: "Casual drinks", fit: "Grey textured polo + navy chinos", shoes: "P448", note: "" },
+    { n: 10, name: "Sunset aperitivo", fit: "Navy floral shirt + white chinos", shoes: "Birkenstocks", note: "Crisp and summery — the print pops against white." }
+  ]},
+  { group: "Day & active", looks: [
+    { n: 11, name: "Sightseeing", fit: "Light blue linen over a white tee + khaki linen shorts", shoes: "Birkenstocks", note: "Diocletian's Palace, Hvar town. Add a cap." },
+    { n: 12, name: "Old Town stroll", fit: "Navy floral shirt + seersucker shorts", shoes: "Birkenstocks", note: "" },
+    { n: 13, name: "Klis Fortress", fit: "Grey tee + navy shorts", shoes: "P448", note: "Closed-toe for the rocky climb. Cap + sunglasses." },
+    { n: 14, name: "E-bike / lavender", fit: "Olive tee + khaki linen shorts", shoes: "P448", note: "" },
+    { n: 15, name: "Daytime explore", fit: "White tee + olive chinos", shoes: "P448 or Birkenstocks", note: "" }
+  ]},
+  { group: "Beach, water & travel", looks: [
+    { n: 16, name: "Boat day", fit: "Teal trunks + white tee + navy floral shirt open over it", shoes: "Birkenstocks", note: "Cap + sunglasses + rashguard for the sun." },
+    { n: 17, name: "Pakleni / beach", fit: "Printed trunks + olive tee", shoes: "Water shoes", note: "Rocky entry — water shoes matter here." },
+    { n: 18, name: "Casual lunch", fit: "Cream polo + seersucker shorts", shoes: "Birkenstocks", note: "" },
+    { n: 19, name: "Lazy resort morning", fit: "Grey polo + khaki linen shorts", shoes: "Birkenstocks", note: "" },
+    { n: 20, name: "Travel day", fit: "Navy linen over a grey tee + navy chinos", shoes: "P448", note: "Hides wrinkles across the flights + the catamaran." }
+  ]}
+];
+function renderPackOutfits() {
+  const host = document.getElementById('pack-outfits-host');
+  if (!host) return;
+  const shoeIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h2l1.5 9a2 2 0 0 0 2 1.5h9a1 1 0 0 0 1 -1.2l-.8 -3.3a2 2 0 0 0 -1.5 -1.5l-4.7 -1l-2.2 -2.5a2 2 0 0 0 -1.5 -.7h-1.8"/><path d="M4 6v-2"/></svg>';
+  let html = '<div class="outfit-intro">20 looks from your kit — every piece pulls double duty, so a small carry-on covers every occasion.</div>';
+  OUTFITS.forEach(g => {
+    html += `<div class="section-label pack-cat"><span class="label">${g.group}</span><span class="line"></span></div><div class="outfit-list">`;
+    g.looks.forEach(o => {
+      html += `<div class="outfit-card">
+        <div class="outfit-head"><span class="outfit-num">${o.n}</span><span class="outfit-name">${o.name}</span></div>
+        <div class="outfit-formula">${o.fit}</div>
+        <div class="outfit-shoes">${shoeIcon}${o.shoes}</div>
+        ${o.note ? `<div class="outfit-note">${o.note}</div>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  });
+  host.innerHTML = html;
+}
+function setPackSubtab(which) {
+  state.packSubtab = which;
+  document.querySelectorAll('#screen-pack .subtab').forEach(b => b.classList.toggle('active', b.dataset.packsubtab === which));
+  const cl = document.getElementById('pack-checklist-host'); if (cl) cl.hidden = which !== 'checklist';
+  const ou = document.getElementById('pack-outfits-host'); if (ou) ou.hidden = which !== 'outfits';
+  if (which === 'outfits') renderPackOutfits();
 }
 
 /* Merge built-in + manual activities for a given day, sorted by time. */
