@@ -395,6 +395,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .outfit-intro { padding: 4px 20px 14px; font-size: 13px; color: var(--muted); line-height: 1.5; }
 .outfit-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
 .outfit-card { background: var(--paper-2); border: 0.5px solid var(--line-soft); border-radius: var(--radius); padding: 13px 15px; }
+.outfit-viz { display: flex; justify-content: center; align-items: center; background: var(--paper); border: 0.5px solid var(--line-soft); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 12px; }
+.outfit-svg { width: 168px; height: 126px; display: block; }
 .outfit-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
 .outfit-num { font-family: var(--mono); font-size: 11px; color: var(--teal); background: var(--paper); border: 0.5px solid var(--line); border-radius: 999px; width: 22px; height: 22px; min-width: 22px; display: inline-flex; align-items: center; justify-content: center; }
 .outfit-name { font-family: var(--serif); font-size: 16px; color: var(--ink); font-weight: 600; line-height: 1.2; }
@@ -1616,36 +1618,121 @@ function resetPack() {
 }
 
 /* OUTFITS — 20 looks built from the packed kit. Static reference. */
+const FAB = {
+  sage:'#8d906c', sageDark:'#787b58', olive:'#5e6b3b',
+  navy:'#2b3450', navyChino:'#262f4a', lightblue:'#aac6d9',
+  white:'#f2f0e9', cream:'#e7ddc2', grey:'#a9aeb0', greyTee:'#bcc0c2',
+  black:'#2c2c2e', khaki:'#c4a97c', seersucker:'#c8d6e1',
+  wedding:'#eef0f0', teal:'#2aa298', printbase:'#8d3a44',
+  suede:'#ccbd9e', p448:'#f0eee6', birk:'#8a5a39', water:'#3a4046',
+  line:'rgba(21,37,44,0.34)'
+};
 const OUTFITS = [
   { group: "Wedding & evening", looks: [
-    { n: 1, name: "Ceremony — formal", fit: "Sage linen suit + linen-cotton wedding shirt", shoes: "Suede slip-ons", note: "Optional knit tie + pocket square. Steam it the night before." },
-    { n: 2, name: "Welcome drinks — cocktail", fit: "Sage suit jacket + light blue linen shirt (open collar) + khaki chinos", shoes: "Suede slip-ons", note: "Relaxed cocktail — the jacket does the work, no tie needed." },
-    { n: 3, name: "Nightclub", fit: "Navy linen shirt, sleeves rolled & untucked + navy chinos", shoes: "P448", note: "Tonal navy with the white sneaker popping. Carpe Diem / Hula Hula." },
-    { n: 4, name: "Nightclub — elevated", fit: "Sage suit jacket + black knit polo + navy chinos", shoes: "P448", note: "A dressier club look without committing to the full suit." },
-    { n: 5, name: "Dressy dinner", fit: "Black knit polo + navy chinos", shoes: "P448", note: "Sharp smart-casual; the white sneaker keeps it modern." }
+    { n: 1, name: "Ceremony — formal", fit: "Sage linen suit + linen-cotton wedding shirt", shoes: "Suede slip-ons", note: "Optional knit tie + pocket square. Steam it the night before.", viz:{ top:{t:'jacket',c:FAB.sage,inner:FAB.wedding,pattern:'tie'}, bottom:{t:'pants',c:FAB.sage}, shoes:{t:'slipon',c:FAB.suede} } },
+    { n: 2, name: "Welcome drinks — cocktail", fit: "Sage suit jacket + light blue linen shirt (open collar) + khaki chinos", shoes: "Suede slip-ons", note: "Relaxed cocktail — the jacket does the work, no tie needed.", viz:{ top:{t:'jacket',c:FAB.sage,inner:FAB.lightblue}, bottom:{t:'pants',c:FAB.khaki}, shoes:{t:'slipon',c:FAB.suede} } },
+    { n: 3, name: "Nightclub", fit: "Navy linen shirt, sleeves rolled & untucked + navy chinos", shoes: "P448", note: "Tonal navy with the white sneaker popping. Carpe Diem / Hula Hula.", viz:{ top:{t:'shirtLS',c:FAB.navy}, bottom:{t:'pants',c:FAB.navyChino}, shoes:{t:'sneaker',c:FAB.p448} } },
+    { n: 4, name: "Nightclub — elevated", fit: "Sage suit jacket + black knit polo + navy chinos", shoes: "P448", note: "A dressier club look without committing to the full suit.", viz:{ top:{t:'jacket',c:FAB.sage,inner:FAB.black}, bottom:{t:'pants',c:FAB.navyChino}, shoes:{t:'sneaker',c:FAB.p448} } },
+    { n: 5, name: "Dressy dinner", fit: "Black knit polo + navy chinos", shoes: "P448", note: "Sharp smart-casual; the white sneaker keeps it modern.", viz:{ top:{t:'polo',c:FAB.black}, bottom:{t:'pants',c:FAB.navyChino}, shoes:{t:'sneaker',c:FAB.p448} } }
   ]},
   { group: "Smart-casual dinners", looks: [
-    { n: 6, name: "Relaxed dinner", fit: "Light blue linen shirt + khaki chinos", shoes: "Suede slip-ons or Birkenstocks", note: "" },
-    { n: 7, name: "Linen dinner", fit: "Linen-cotton shirt + navy chinos", shoes: "Suede slip-ons", note: "Your wedding shirt, off-duty." },
-    { n: 8, name: "Resort evening", fit: "Cream polo + olive chinos", shoes: "Suede slip-ons", note: "Earthy tonal — cream over olive." },
-    { n: 9, name: "Casual drinks", fit: "Grey textured polo + navy chinos", shoes: "P448", note: "" },
-    { n: 10, name: "Sunset aperitivo", fit: "Navy floral shirt + white chinos", shoes: "Birkenstocks", note: "Crisp and summery — the print pops against white." }
+    { n: 6, name: "Relaxed dinner", fit: "Light blue linen shirt + khaki chinos", shoes: "Suede slip-ons or Birkenstocks", note: "", viz:{ top:{t:'shirt',c:FAB.lightblue}, bottom:{t:'pants',c:FAB.khaki}, shoes:{t:'slipon',c:FAB.suede} } },
+    { n: 7, name: "Linen dinner", fit: "Linen-cotton shirt + navy chinos", shoes: "Suede slip-ons", note: "Your wedding shirt, off-duty.", viz:{ top:{t:'shirt',c:FAB.wedding}, bottom:{t:'pants',c:FAB.navyChino}, shoes:{t:'slipon',c:FAB.suede} } },
+    { n: 8, name: "Resort evening", fit: "Cream polo + olive chinos", shoes: "Suede slip-ons", note: "Earthy tonal — cream over olive.", viz:{ top:{t:'polo',c:FAB.cream}, bottom:{t:'pants',c:FAB.olive}, shoes:{t:'slipon',c:FAB.suede} } },
+    { n: 9, name: "Casual drinks", fit: "Grey textured polo + navy chinos", shoes: "P448", note: "", viz:{ top:{t:'polo',c:FAB.grey}, bottom:{t:'pants',c:FAB.navyChino}, shoes:{t:'sneaker',c:FAB.p448} } },
+    { n: 10, name: "Sunset aperitivo", fit: "Navy floral shirt + white chinos", shoes: "Birkenstocks", note: "Crisp and summery — the print pops against white.", viz:{ top:{t:'shirt',c:FAB.navy,pattern:'floral'}, bottom:{t:'pants',c:FAB.white}, shoes:{t:'sandal',c:FAB.birk} } }
   ]},
   { group: "Day & active", looks: [
-    { n: 11, name: "Sightseeing", fit: "Light blue linen over a white tee + khaki linen shorts", shoes: "Birkenstocks", note: "Diocletian's Palace, Hvar town. Add a cap." },
-    { n: 12, name: "Old Town stroll", fit: "Navy floral shirt + seersucker shorts", shoes: "Birkenstocks", note: "" },
-    { n: 13, name: "Klis Fortress", fit: "Grey tee + navy shorts", shoes: "P448", note: "Closed-toe for the rocky climb. Cap + sunglasses." },
-    { n: 14, name: "E-bike / lavender", fit: "Olive tee + khaki linen shorts", shoes: "P448", note: "" },
-    { n: 15, name: "Daytime explore", fit: "White tee + olive chinos", shoes: "P448 or Birkenstocks", note: "" }
+    { n: 11, name: "Sightseeing", fit: "Light blue linen over a white tee + khaki linen shorts", shoes: "Birkenstocks", note: "Diocletian's Palace, Hvar town. Add a cap.", viz:{ top:{t:'shirt',c:FAB.lightblue}, bottom:{t:'shorts',c:FAB.khaki}, shoes:{t:'sandal',c:FAB.birk} }, acc:'cap' },
+    { n: 12, name: "Old Town stroll", fit: "Navy floral shirt + seersucker shorts", shoes: "Birkenstocks", note: "", viz:{ top:{t:'shirt',c:FAB.navy,pattern:'floral'}, bottom:{t:'shorts',c:FAB.seersucker,pattern:'stripe'}, shoes:{t:'sandal',c:FAB.birk} } },
+    { n: 13, name: "Klis Fortress", fit: "Grey tee + navy shorts", shoes: "P448", note: "Closed-toe for the rocky climb. Cap + sunglasses.", viz:{ top:{t:'tee',c:FAB.greyTee}, bottom:{t:'shorts',c:FAB.navy}, shoes:{t:'sneaker',c:FAB.p448} }, acc:'cap' },
+    { n: 14, name: "E-bike / lavender", fit: "Olive tee + khaki linen shorts", shoes: "P448", note: "", viz:{ top:{t:'tee',c:FAB.olive}, bottom:{t:'shorts',c:FAB.khaki}, shoes:{t:'sneaker',c:FAB.p448} }, acc:'cap' },
+    { n: 15, name: "Daytime explore", fit: "White tee + olive chinos", shoes: "P448 or Birkenstocks", note: "", viz:{ top:{t:'tee',c:FAB.white}, bottom:{t:'pants',c:FAB.olive}, shoes:{t:'sneaker',c:FAB.p448} } }
   ]},
   { group: "Beach, water & travel", looks: [
-    { n: 16, name: "Boat day", fit: "Teal trunks + white tee + navy floral shirt open over it", shoes: "Birkenstocks", note: "Cap + sunglasses + rashguard for the sun." },
-    { n: 17, name: "Pakleni / beach", fit: "Printed trunks + olive tee", shoes: "Water shoes", note: "Rocky entry — water shoes matter here." },
-    { n: 18, name: "Casual lunch", fit: "Cream polo + seersucker shorts", shoes: "Birkenstocks", note: "" },
-    { n: 19, name: "Lazy resort morning", fit: "Grey polo + khaki linen shorts", shoes: "Birkenstocks", note: "" },
-    { n: 20, name: "Travel day", fit: "Navy linen over a grey tee + navy chinos", shoes: "P448", note: "Hides wrinkles across the flights + the catamaran." }
+    { n: 16, name: "Boat day", fit: "Teal trunks + white tee + navy floral shirt open over it", shoes: "Birkenstocks", note: "Cap + sunglasses + rashguard for the sun.", viz:{ top:{t:'shirt',c:FAB.navy,pattern:'floral'}, bottom:{t:'swim',c:FAB.teal}, shoes:{t:'sandal',c:FAB.birk} }, acc:'cap' },
+    { n: 17, name: "Pakleni / beach", fit: "Printed trunks + olive tee", shoes: "Water shoes", note: "Rocky entry — water shoes matter here.", viz:{ top:{t:'tee',c:FAB.olive}, bottom:{t:'swim',c:FAB.printbase,pattern:'dots'}, shoes:{t:'watershoe',c:FAB.water} }, acc:'cap' },
+    { n: 18, name: "Casual lunch", fit: "Cream polo + seersucker shorts", shoes: "Birkenstocks", note: "", viz:{ top:{t:'polo',c:FAB.cream}, bottom:{t:'shorts',c:FAB.seersucker,pattern:'stripe'}, shoes:{t:'sandal',c:FAB.birk} } },
+    { n: 19, name: "Lazy resort morning", fit: "Grey polo + khaki linen shorts", shoes: "Birkenstocks", note: "", viz:{ top:{t:'polo',c:FAB.grey}, bottom:{t:'shorts',c:FAB.khaki}, shoes:{t:'sandal',c:FAB.birk} } },
+    { n: 20, name: "Travel day", fit: "Navy linen over a grey tee + navy chinos", shoes: "P448", note: "Hides wrinkles across the flights + the catamaran.", viz:{ top:{t:'shirtLS',c:FAB.navy}, bottom:{t:'pants',c:FAB.navyChino}, shoes:{t:'sneaker',c:FAB.p448} } }
   ]}
 ];
+function vTop(t, color, inner, pattern) {
+  const cx = 100, ln = FAB.line, s = [];
+  if (t === 'jacket' || t === 'shirtLS') {
+    s.push(`<path d="M${cx-28} 26 L${cx-46} 32 L${cx-42} 62 L${cx-28} 56 Z" fill="${color}" stroke="${ln}" stroke-width="1.4" stroke-linejoin="round"/>`);
+    s.push(`<path d="M${cx+28} 26 L${cx+46} 32 L${cx+42} 62 L${cx+28} 56 Z" fill="${color}" stroke="${ln}" stroke-width="1.4" stroke-linejoin="round"/>`);
+  } else {
+    s.push(`<path d="M${cx-26} 26 L${cx-44} 33 L${cx-39} 46 L${cx-26} 41 Z" fill="${color}" stroke="${ln}" stroke-width="1.4" stroke-linejoin="round"/>`);
+    s.push(`<path d="M${cx+26} 26 L${cx+44} 33 L${cx+39} 46 L${cx+26} 41 Z" fill="${color}" stroke="${ln}" stroke-width="1.4" stroke-linejoin="round"/>`);
+  }
+  const bw = (t === 'jacket') ? 30 : 27;
+  s.push(`<rect x="${cx-bw}" y="24" width="${bw*2}" height="44" rx="5" fill="${color}" stroke="${ln}" stroke-width="1.4"/>`);
+  if (pattern === 'floral') {
+    let d = '';
+    for (let i=0;i<5;i++) for (let j=0;j<3;j++) d += `<circle cx="${cx-16+i*8}" cy="${30+j*11}" r="1.7" fill="rgba(255,255,255,0.72)"/>`;
+    s.push(d);
+  }
+  if (t === 'tee') {
+    s.push(`<path d="M${cx-9} 24 Q${cx} 31 ${cx+9} 24" fill="none" stroke="${ln}" stroke-width="1.6"/>`);
+  } else if (t === 'polo') {
+    s.push(`<path d="M${cx-10} 24 L${cx-2} 23 L${cx} 30 Z" fill="${color}" stroke="${ln}" stroke-width="1.2"/>`);
+    s.push(`<path d="M${cx+10} 24 L${cx+2} 23 L${cx} 30 Z" fill="${color}" stroke="${ln}" stroke-width="1.2"/>`);
+    s.push(`<line x1="${cx}" y1="30" x2="${cx}" y2="40" stroke="${ln}" stroke-width="1.2"/>`);
+    s.push(`<circle cx="${cx}" cy="34" r="0.9" fill="${ln}"/><circle cx="${cx}" cy="38" r="0.9" fill="${ln}"/>`);
+  } else if (t === 'shirt' || t === 'shirtLS') {
+    s.push(`<path d="M${cx-10} 23 L${cx} 33 L${cx-2} 24 Z" fill="${color}" stroke="${ln}" stroke-width="1.2"/>`);
+    s.push(`<path d="M${cx+10} 23 L${cx} 33 L${cx+2} 24 Z" fill="${color}" stroke="${ln}" stroke-width="1.2"/>`);
+    s.push(`<line x1="${cx}" y1="30" x2="${cx}" y2="66" stroke="${ln}" stroke-width="1.1"/>`);
+    let b = ''; for (let y=37;y<=62;y+=7) b += `<circle cx="${cx}" cy="${y}" r="0.9" fill="${ln}"/>`; s.push(b);
+  } else if (t === 'jacket') {
+    s.push(`<path d="M${cx-13} 25 L${cx+13} 25 L${cx} 60 Z" fill="${inner||FAB.wedding}" stroke="${ln}" stroke-width="1"/>`);
+    s.push(`<path d="M${cx-13} 25 L${cx-3} 26 L${cx-7} 48 L${cx-15} 42 Z" fill="${FAB.sageDark}" stroke="${ln}" stroke-width="1"/>`);
+    s.push(`<path d="M${cx+13} 25 L${cx+3} 26 L${cx+7} 48 L${cx+15} 42 Z" fill="${FAB.sageDark}" stroke="${ln}" stroke-width="1"/>`);
+    if (pattern === 'tie') s.push(`<path d="M${cx-2.4} 30 L${cx+2.4} 30 L${cx+1.6} 53 L${cx} 57 L${cx-1.6} 53 Z" fill="#6a4a52" stroke="${ln}" stroke-width="0.8"/>`);
+  }
+  return s.join('');
+}
+function vBottom(t, color, pattern) {
+  const cx = 100, ln = FAB.line, s = [], top = 74;
+  const legBot = (t === 'pants') ? 120 : 102;
+  s.push(`<rect x="${cx-22}" y="${top}" width="44" height="7" rx="2" fill="${color}" stroke="${ln}" stroke-width="1.3"/>`);
+  s.push(`<rect x="${cx-22}" y="${top+6}" width="20" height="${legBot-(top+6)}" rx="3" fill="${color}" stroke="${ln}" stroke-width="1.3"/>`);
+  s.push(`<rect x="${cx+2}" y="${top+6}" width="20" height="${legBot-(top+6)}" rx="3" fill="${color}" stroke="${ln}" stroke-width="1.3"/>`);
+  if (t === 'swim') s.push(`<line x1="${cx-4}" y1="${top+1}" x2="${cx-4}" y2="${top+9}" stroke="${ln}" stroke-width="1.2"/><line x1="${cx+4}" y1="${top+1}" x2="${cx+4}" y2="${top+9}" stroke="${ln}" stroke-width="1.2"/>`);
+  if (pattern === 'stripe') {
+    let st = ''; for (let x=cx-18;x<cx+20;x+=4){ if (x>cx-3 && x<cx+3) continue; st += `<line x1="${x}" y1="${top+7}" x2="${x}" y2="${legBot-2}" stroke="rgba(255,255,255,0.6)" stroke-width="1.1"/>`; } s.push(st);
+  } else if (pattern === 'dots') {
+    let dt = ''; for (let i=0;i<4;i++) for (let j=0;j<2;j++) dt += `<circle cx="${cx-14+i*9}" cy="${top+14+j*9}" r="1.5" fill="rgba(255,255,255,0.65)"/>`; s.push(dt);
+  }
+  return s.join('');
+}
+function vShoes(t, color) {
+  const cx = 100, ln = FAB.line, y = 132, s = [];
+  function one(x) {
+    if (t === 'sandal') {
+      return `<path d="M${x-13} ${y+6} Q${x-14} ${y+1} ${x-7} ${y+1} L${x+11} ${y+1} Q${x+15} ${y+1} ${x+15} ${y+5} Q${x+15} ${y+8} ${x+10} ${y+8} L${x-9} ${y+8} Q${x-13} ${y+8} ${x-13} ${y+6} Z" fill="${color}" stroke="${ln}" stroke-width="1.2"/><path d="M${x-6} ${y+1} q4 -5 9 0" fill="none" stroke="${ln}" stroke-width="1.2"/>`;
+    }
+    if (t === 'watershoe') {
+      return `<path d="M${x-13} ${y+8} Q${x-14} ${y-2} ${x-4} ${y-2} Q${x+4} ${y-2} ${x+6} ${y+1} L${x+12} ${y+3} Q${x+16} ${y+4} ${x+16} ${y+7} Q${x+16} ${y+9} ${x+12} ${y+9} L${x-10} ${y+9} Q${x-13} ${y+9} ${x-13} ${y+8} Z" fill="${color}" stroke="${ln}" stroke-width="1.2"/>`;
+    }
+    let g = `<path d="M${x-14} ${y+8} Q${x-15} ${y} ${x-6} ${y-1} L${x+9} ${y-1} Q${x+15} ${y-1} ${x+16} ${y+5} Q${x+16} ${y+8} ${x+12} ${y+8} Z" fill="${color}" stroke="${ln}" stroke-width="1.2"/>`;
+    g += `<path d="M${x-14} ${y+8} L${x+14} ${y+8}" stroke="${ln}" stroke-width="2" stroke-linecap="round"/>`;
+    if (t === 'sneaker') g += `<line x1="${x-2}" y1="${y+1}" x2="${x+4}" y2="${y+1}" stroke="${ln}" stroke-width="1"/><line x1="${x-1}" y1="${y+4}" x2="${x+5}" y2="${y+4}" stroke="${ln}" stroke-width="1"/>`;
+    return g;
+  }
+  s.push(one(cx-17)); s.push(one(cx+17));
+  return s.join('');
+}
+function vCap() {
+  const x = 174, y = 16, ln = FAB.line;
+  return `<path d="M${x-12} ${y+4} Q${x-12} ${y-5} ${x} ${y-5} Q${x+10} ${y-5} ${x+11} ${y+3} L${x+18} ${y+5} Q${x+20} ${y+6} ${x+18} ${y+8} L${x+11} ${y+6} Q${x+6} ${y+6} ${x-12} ${y+5} Z" fill="${FAB.khaki}" stroke="${ln}" stroke-width="1.1" stroke-linejoin="round"/>`;
+}
+function outfitBoard(o) {
+  const v = o.viz; if (!v) return '';
+  const board = vTop(v.top.t, v.top.c, v.top.inner, v.top.pattern) + vBottom(v.bottom.t, v.bottom.c, v.bottom.pattern) + vShoes(v.shoes.t, v.shoes.c) + (o.acc === 'cap' ? vCap() : '');
+  return `<svg class="outfit-svg" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${o.name} flat lay">${board}</svg>`;
+}
 function renderPackOutfits() {
   const host = document.getElementById('pack-outfits-host');
   if (!host) return;
@@ -1655,6 +1742,7 @@ function renderPackOutfits() {
     html += `<div class="section-label pack-cat"><span class="label">${g.group}</span><span class="line"></span></div><div class="outfit-list">`;
     g.looks.forEach(o => {
       html += `<div class="outfit-card">
+        <div class="outfit-viz">${outfitBoard(o)}</div>
         <div class="outfit-head"><span class="outfit-num">${o.n}</span><span class="outfit-name">${o.name}</span></div>
         <div class="outfit-formula">${o.fit}</div>
         <div class="outfit-shoes">${shoeIcon}${o.shoes}</div>
