@@ -131,6 +131,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* Activity rows */
 .activity-list { padding: 0 20px; }
 .activity { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 0.5px solid var(--line-soft); cursor: pointer; position: relative; }
+
+/* Swipe-to-delete */
+.swipe-wrap { position: relative; overflow: hidden; }
+.swipe-surface { background: var(--paper); transition: transform 0.2s ease; touch-action: pan-y; will-change: transform; padding-left: 2px; padding-right: 2px; }
+.swipe-delete { position: absolute; top: 0; right: 0; bottom: 0; width: 78px; background: var(--rust); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 600; cursor: pointer; z-index: 0; }
+.swipe-delete .icon { width: 18px; height: 18px; }
+.swipe-surface { z-index: 1; position: relative; }
 .activity:last-child { border-bottom: none; }
 .activity:hover { background: var(--paper-2); margin: 0 -8px; padding: 14px 8px; border-radius: var(--radius-sm); border-bottom-color: transparent; }
 .activity:hover + .activity { border-top: 0.5px solid var(--line-soft); margin-top: -0.5px; }
@@ -375,6 +382,17 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .pack-bar { height: 5px; background: var(--paper-3); border-radius: 999px; overflow: hidden; }
 .pack-bar-fill { height: 100%; background: var(--teal); border-radius: 999px; transition: width 0.3s ease; }
 .pack-reset-row { padding: 18px 20px 8px; display: flex; justify-content: center; }
+.pack-add-row { display: flex; gap: 8px; padding: 0 20px 10px; align-items: stretch; }
+.restore-row { padding: 4px 20px 24px; display: flex; justify-content: center; }
+.pack-add-row input[type="text"] { flex: 1; min-width: 0; padding: 11px 14px; font-size: 15px; font-family: var(--sans); border: 0.5px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); outline: none; }
+.pack-add-row input[type="text"]:focus { border-color: var(--teal); }
+.pack-add-row select { flex-shrink: 0; max-width: 38%; padding: 0 8px; font-size: 12px; font-family: var(--sans); border: 0.5px solid var(--line); border-radius: var(--radius-sm); background: var(--paper-2); color: var(--ink-2); outline: none; }
+.pack-add-row button { width: 44px; flex-shrink: 0; background: var(--teal); color: var(--paper); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+.pack-add-row button .icon { width: 20px; height: 20px; }
+.pack-filter-bar { display: flex; gap: 7px; padding: 0 20px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.pack-filter-bar::-webkit-scrollbar { display: none; }
+.pack-chip { flex-shrink: 0; padding: 6px 13px; font-size: 12px; font-weight: 500; border-radius: 999px; background: var(--paper-2); border: 0.5px solid var(--line-soft); color: var(--muted); white-space: nowrap; }
+.pack-chip.active { background: var(--ink); color: var(--paper); border-color: transparent; }
 .pack-cat { padding: 0 20px; margin-bottom: 6px; }
 .pack-list { padding: 0 20px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
 .pack-item { display: flex; align-items: flex-start; gap: 11px; background: var(--paper-2); border: 0.5px solid var(--line-soft); border-radius: var(--radius); padding: 12px 14px; }
@@ -531,10 +549,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <div class="pack-progress-top"><span id="pack-prog-label">0 of 0 packed</span><span id="pack-prog-pct">0%</span></div>
       <div class="pack-bar"><div class="pack-bar-fill" id="pack-bar-fill" style="width:0%"></div></div>
     </div>
-    <div class="idea-add">
+    <div class="pack-add-row">
       <input id="pack-input" type="text" placeholder="Add an item… (e.g. portable fan)" onkeydown="if(event.key==='Enter')addPackItem()">
+      <select id="pack-cat-select" aria-label="Category"></select>
       <button onclick="addPackItem()" aria-label="Add item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
     </div>
+    <div class="pack-filter-bar" id="pack-filter-bar"></div>
     <div id="pack-host"></div>
     <div class="pack-reset-row"><button class="btn-mini" onclick="resetPack()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg> Reset list</button></div>
     </div>
@@ -1338,6 +1358,8 @@ let state = {
   dateOverride: null,
   // which subtab is active on the merged Trip screen
   tripSubtab: 'stays',
+  // active packing filter: 'all' | 'unpacked' | 'packed' | 'cat:<name>'
+  packFilter: 'all',
 };
 
 /* Return today's date as YYYY-MM-DD, honoring any debug override. */
@@ -1414,6 +1436,24 @@ function updateManualActivity(id, patch) {
 }
 function deleteManualActivity(id) {
   saveManualActivities(getManualActivities().filter(a => a.id !== id));
+}
+
+/* Hidden built-in activities — we don't delete from the source file (so updates
+   keep working), we just record which built-in IDs the user removed. Restorable
+   via restoreHiddenActivities(). */
+function getHiddenActivities() {
+  try { return JSON.parse(localStorage.getItem(userKey('hidden-act')) || '{}'); } catch (e) { return {}; }
+}
+function hideActivity(id) {
+  const h = getHiddenActivities();
+  h[id] = true;
+  try { localStorage.setItem(userKey('hidden-act'), JSON.stringify(h)); } catch (e) {}
+}
+function restoreHiddenActivities() {
+  try { localStorage.removeItem(userKey('hidden-act')); } catch (e) {}
+}
+function hiddenActivityCount() {
+  return Object.keys(getHiddenActivities()).length;
 }
 
 function getIdeas() {
@@ -1555,15 +1595,55 @@ function renderPack() {
   updateHeaders();
   const st = getPackState();
   const checked = st.checked || {};
-  const cats = packCategories();
+  let cats = packCategories();
+
+  // Populate the category dropdown for the add-row (once per render)
+  const sel = document.getElementById('pack-cat-select');
+  if (sel) {
+    const names = allPackCategories();
+    const current = sel.value || 'My additions';
+    sel.innerHTML = names.map(n => `<option value="${escapeAttr(n)}">${n}</option>`).join('')
+      + '<option value="__new__">+ New category…</option>';
+    // Keep "My additions" as a sensible default if present
+    if (names.includes(current)) sel.value = current;
+    else if (names.includes('My additions')) sel.value = 'My additions';
+  }
+
+  // Build filter chips: All + Unpacked + each category
+  const activeFilter = state.packFilter || 'all';
+  const filterBar = document.getElementById('pack-filter-bar');
+  if (filterBar) {
+    const chips = [['all', 'All'], ['unpacked', 'Unpacked'], ['packed', 'Packed']]
+      .concat(cats.map(c => ['cat:' + c.cat, c.cat]));
+    filterBar.innerHTML = chips.map(([key, label]) =>
+      `<button class="pack-chip${activeFilter === key ? ' active' : ''}" onclick="setPackFilter('${escapeAttr(key)}')">${label}</button>`
+    ).join('');
+  }
+
+  // Apply the active filter to what we render
+  let viewCats = cats;
+  if (activeFilter === 'unpacked') {
+    viewCats = cats.map(c => ({ cat: c.cat, items: c.items.filter(it => !checked[it.id]) })).filter(c => c.items.length);
+  } else if (activeFilter === 'packed') {
+    viewCats = cats.map(c => ({ cat: c.cat, items: c.items.filter(it => checked[it.id]) })).filter(c => c.items.length);
+  } else if (activeFilter.startsWith('cat:')) {
+    const want = activeFilter.slice(4);
+    viewCats = cats.filter(c => c.cat === want);
+  }
+
   const host = document.getElementById('pack-host');
-  let total = 0, done = 0, html = '';
-  cats.forEach(c => {
+  // Totals reflect the FULL list, not the filtered view, so progress stays meaningful
+  let total = 0, done = 0;
+  cats.forEach(c => c.items.forEach(it => { total++; if (checked[it.id]) done++; }));
+
+  let html = '';
+  if (!viewCats.length) {
+    html = `<div class="empty" style="padding:30px 20px;"><div class="t">Nothing here</div><div class="s">No items match this filter.</div></div>`;
+  }
+  viewCats.forEach(c => {
     html += `<div class="section-label pack-cat"><span class="label">${c.cat}</span><span class="line"></span></div><div class="pack-list">`;
     c.items.forEach(it => {
-      total++;
       const isDone = !!checked[it.id];
-      if (isDone) done++;
       const tag = it.tag === 'have' ? '<span class="pack-tag pack-tag-have">have</span>'
                 : it.tag === 'add' ? '<span class="pack-tag pack-tag-add">add</span>' : '';
       html += `<div class="pack-item${isDone ? ' done' : ''}">
@@ -1575,11 +1655,16 @@ function renderPack() {
     html += '</div>';
   });
   host.innerHTML = html;
+
   const pct = total ? Math.round(done / total * 100) : 0;
   document.getElementById('pack-prog-label').textContent = `${done} of ${total} packed`;
   document.getElementById('pack-prog-pct').textContent = pct + '%';
   document.getElementById('pack-bar-fill').style.width = pct + '%';
   setPackSubtab(state.packSubtab || 'checklist');
+}
+function setPackFilter(key) {
+  state.packFilter = key;
+  renderPack();
 }
 function togglePackItem(id) {
   const st = getPackState();
@@ -1588,13 +1673,27 @@ function togglePackItem(id) {
   savePackState(st);
   renderPack();
 }
+function allPackCategories() {
+  // Built-in categories + any custom ones the user has created, de-duplicated, in order.
+  const names = DEFAULT_PACKING.map(c => c.cat);
+  const st = getPackState();
+  (st.custom || []).forEach(it => { if (it.cat && !names.includes(it.cat)) names.push(it.cat); });
+  return names;
+}
 function addPackItem() {
   const input = document.getElementById('pack-input');
   const val = (input.value || '').trim();
   if (!val) return;
+  const sel = document.getElementById('pack-cat-select');
+  let cat = sel ? sel.value : 'My additions';
+  if (cat === '__new__') {
+    const custom = (prompt('New category name:') || '').trim();
+    if (!custom) return;
+    cat = custom;
+  }
   const st = getPackState();
   st.custom = st.custom || [];
-  st.custom.push({ id: 'pack-custom-' + Date.now(), label: val, note: '', tag: 'add', cat: 'My additions' });
+  st.custom.push({ id: 'pack-custom-' + Date.now(), label: val, note: '', tag: 'add', cat });
   savePackState(st);
   input.value = '';
   renderPack();
@@ -1763,8 +1862,9 @@ function setPackSubtab(which) {
 
 /* Merge built-in + manual activities for a given day, sorted by time. */
 function activitiesForDay(day) {
+  const hidden = getHiddenActivities();
   const manual = getManualActivities().filter(a => a.date === day.date);
-  const all = [...day.activities, ...manual];
+  const all = [...day.activities.filter(a => !a.id || !hidden[a.id]), ...manual];
   return all.slice().sort((a, b) => timeRank(a.time) - timeRank(b.time));
 }
 
@@ -1962,21 +2062,100 @@ function renderActivity(a, day) {
   if (a.manual) tags.push('<span class="tag-mini mine">Added by you</span>');
 
   const tappable = !!a.id;
-  const clickAttr = tappable ? `onclick="openActivityDetail('${a.id}')"` : '';
+  const clickAttr = tappable ? `onclick="onActivityTap(event, '${a.id}')"` : '';
+  // Only items with an id can be swiped/deleted (built-in get hidden, manual get removed)
+  const swipeAttrs = a.id
+    ? `data-swipe-id="${a.id}" data-title="${escapeAttr(a.title)}" ontouchstart="swipeStart(event)" ontouchmove="swipeMove(event)" ontouchend="swipeEnd(event)"`
+    : '';
 
   return `
-    <div class="activity" ${clickAttr}>
-      <div class="${colorClass}">${iconHtml(inferIcon(a))}</div>
-      <div class="activity-main">
-        <div class="activity-title">${a.title}</div>
-        <div class="activity-meta">
-          ${a.meta ? `<span>${a.meta}</span>` : ''}
-          ${tags.length ? `<span class="dot"></span>${tags.join('')}` : ''}
-        </div>
+    <div class="swipe-wrap">
+      <div class="swipe-delete" onclick="confirmDeleteFromSwipe('${a.id || ''}')">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3h6v3"/></svg>
+        <span>Delete</span>
       </div>
-      <div class="activity-time">${a.time || ''}</div>
-      ${tappable ? '<svg class="icon chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6l-6 6"/></svg>' : ''}
+      <div class="activity swipe-surface" ${clickAttr} ${swipeAttrs}>
+        <div class="${colorClass}">${iconHtml(inferIcon(a))}</div>
+        <div class="activity-main">
+          <div class="activity-title">${a.title}</div>
+          <div class="activity-meta">
+            ${a.meta ? `<span>${a.meta}</span>` : ''}
+            ${tags.length ? `<span class="dot"></span>${tags.join('')}` : ''}
+          </div>
+        </div>
+        <div class="activity-time">${a.time || ''}</div>
+        ${tappable ? '<svg class="icon chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6l-6 6"/></svg>' : ''}
+      </div>
     </div>`;
+}
+
+/* ---- Swipe-to-delete handling ----
+   Swipe a row left to reveal a Delete button. Tap it → confirm → remove.
+   A normal tap (no swipe) opens the detail as before. */
+let _swipe = { el: null, startX: 0, startY: 0, dx: 0, open: false, moved: false };
+const SWIPE_REVEAL = 78; // px the row slides to expose the delete button
+
+function _closeOpenSwipe(except) {
+  document.querySelectorAll('.swipe-surface.open').forEach(el => {
+    if (el !== except) { el.classList.remove('open'); el.style.transform = ''; }
+  });
+}
+function swipeStart(e) {
+  const el = e.currentTarget;
+  _swipe = { el, startX: e.touches[0].clientX, startY: e.touches[0].clientY, dx: 0, open: el.classList.contains('open'), moved: false };
+}
+function swipeMove(e) {
+  if (!_swipe.el) return;
+  const x = e.touches[0].clientX, y = e.touches[0].clientY;
+  const dx = x - _swipe.startX, dy = y - _swipe.startY;
+  // Ignore mostly-vertical gestures (let the page scroll)
+  if (Math.abs(dy) > Math.abs(dx) && !_swipe.moved) { _swipe.el = null; return; }
+  _swipe.moved = true;
+  let base = _swipe.open ? -SWIPE_REVEAL : 0;
+  let t = base + dx;
+  if (t > 0) t = 0;
+  if (t < -SWIPE_REVEAL - 20) t = -SWIPE_REVEAL - 20;
+  _swipe.dx = t;
+  _swipe.el.style.transform = `translateX(${t}px)`;
+  if (e.cancelable) e.preventDefault();
+}
+function swipeEnd(e) {
+  if (!_swipe.el) return;
+  const el = _swipe.el;
+  // Decide open vs closed based on how far it ended up
+  if (_swipe.dx < -SWIPE_REVEAL / 2) {
+    _closeOpenSwipe(el);
+    el.classList.add('open');
+    el.style.transform = `translateX(${-SWIPE_REVEAL}px)`;
+  } else {
+    el.classList.remove('open');
+    el.style.transform = '';
+  }
+  _swipe.el = null;
+}
+function onActivityTap(e, id) {
+  // If this row is swiped open, a tap should just close it, not open detail.
+  const surface = e.currentTarget;
+  if (surface.classList.contains('open')) {
+    surface.classList.remove('open');
+    surface.style.transform = '';
+    return;
+  }
+  // If any other row is open, close it and swallow the tap.
+  const anyOpen = document.querySelector('.swipe-surface.open');
+  if (anyOpen) { _closeOpenSwipe(null); return; }
+  openActivityDetail(id);
+}
+function confirmDeleteFromSwipe(id) {
+  if (!id) return;
+  const found = findActivity(id);
+  const title = found ? found.activity.title : 'this item';
+  if (!confirm(`Remove "${title}" from the itinerary?`)) return;
+  if (id.indexOf('manual-') === 0) deleteManualActivity(id);
+  else hideActivity(id);
+  _closeOpenSwipe(null);
+  // Re-render whichever screen is showing
+  show(state.currentScreen);
 }
 
 function renderItinerary() {
@@ -2004,7 +2183,14 @@ function renderItinerary() {
       </div>
       <button class="add-activity-btn" onclick="openAddActivity('${d.date}')"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Add activity</button>
     </div>
-  `).join('');
+  `).join('')
+  + (hiddenActivityCount() ? `<div class="restore-row"><button class="btn-mini" onclick="doRestoreHidden()"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg> Restore ${hiddenActivityCount()} removed item${hiddenActivityCount() > 1 ? 's' : ''}</button></div>` : '');
+}
+
+function doRestoreHidden() {
+  if (!confirm('Restore all removed built-in activities?')) return;
+  restoreHiddenActivities();
+  show('itinerary');
 }
 
 function renderTrip() {
@@ -2230,7 +2416,7 @@ function renderSettings() {
     <div class="settings-row">
       <div>
         <div class="settings-name">Version</div>
-        <div class="settings-sub">Atlas v1.1</div>
+        <div class="settings-sub">Atlas v1.2</div>
       </div>
     </div>
     <div id="settings-panel-host" style="padding: 0 20px;"></div>
