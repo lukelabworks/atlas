@@ -968,22 +968,163 @@ const TRIPS = {
   seasia2026: {
     id: 'seasia2026',
     name: 'Southeast Asia',
-    fullName: 'Southeast Asia · Fall 2026',
+    fullName: 'Southeast Asia · Nov 2026',
     badge: 'SEA',
-    subtitle: 'Family trip · planning',
-    dateRange: 'Fall 2026',
-    startDate: '2026-10-01',
-    endDate: '2026-10-21',
-    travelers: 'Luke, Christy, Ian (13), Aspen (10)',
+    subtitle: 'Couples cruise · Singapore → Bangkok',
+    dateRange: 'Oct 30 – Nov 15, 2026',
+    startDate: '2026-10-30',
+    endDate: '2026-11-15',
+    travelers: 'Luke & Christy',
     currency: 'Mixed',
     timezone: 'Asia/Singapore',
-    status: 'planning',
-    daysInCountry: '?',
-    timeOffset: '+13h',
-    days: [],
-    lodging: [],
+    status: 'future',
+    daysInCountry: 10,
+    timeOffset: '+13–14h',
+    days: [
+      { date: '2026-10-30', dayLabel: 'Fri Oct 30', title: 'Depart Austin → Singapore', location: 'Austin → San Francisco', wedding: false,
+        activities: [
+          { id: 'sea-fly-aus-sfo', time: '9:50 am', title: 'AUS → SFO', meta: 'Southwest 3582 · nonstop · lands 11:40am · 3h 50m', icon: 'plane', color: 'teal', booked: true,
+            links: [
+              { type: 'search', query: 'Southwest Airlines check in', on: 'google', label: 'Check in' },
+              { type: 'search', query: 'AUS airport TSA wait times', on: 'google', label: 'AUS wait times' },
+            ] },
+          { id: 'sea-fly-sfo-sin', time: '9:15 pm', title: 'SFO → SIN', meta: 'Singapore Airlines SQ33 · A350-900 · SFO Terminal I · ~17.5h · lands Sun Nov 1, 5:45am (crosses date line)', icon: 'plane', color: 'teal', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.singaporeair.com/managebooking', label: 'SQ check in', icon: 'plane' },
+              { type: 'map', query: 'San Francisco International Airport Terminal I' },
+            ] },
+        ] },
+      { date: '2026-11-01', dayLabel: 'Sun Nov 1', title: 'Arrive Singapore', location: 'Singapore', wedding: false,
+        activities: [
+          { id: 'sea-arrive-sin', time: '5:45 am', title: 'Arrive Singapore · Changi', meta: 'SQ33 lands · clear immigration · transfer to hotel · ~3 days in Singapore before the cruise', icon: 'plane', color: 'gold', booked: true,
+            links: [
+              { type: 'map', query: 'Singapore Changi Airport' },
+            ] },
+          { id: 'sea-andaz-checkin', time: '3:00 pm', title: 'Check in · Andaz Singapore', meta: '5 Fraser Street · 1 King · conf 17489386 · ask about early bag drop after the morning landing', icon: 'bed', color: '', booked: true,
+            links: [
+              { type: 'map', query: 'Andaz Singapore 5 Fraser Street' },
+            ] },
+        ] },
+      { date: '2026-11-03', dayLabel: 'Tue Nov 3', title: 'Singapore · last day before the cruise', location: 'Singapore', wedding: false,
+        activities: [
+          { id: 'sea-andaz-checkout', time: '11:00 am', title: 'Check out · Andaz Singapore', meta: 'Move over to JW Marriott South Beach for the pre-cruise night', icon: 'bed', color: '', booked: true,
+            links: [
+              { type: 'map', query: 'Andaz Singapore 5 Fraser Street' },
+            ] },
+          { id: 'sea-jw-checkin', time: '3:00 pm', title: 'Check in · JW Marriott South Beach', meta: 'Deluxe Guest Room, 1 King · conf 73735073 · last night before embarkation', icon: 'bed', color: '', booked: true,
+            links: [
+              { type: 'map', query: 'JW Marriott Hotel Singapore South Beach' },
+            ] },
+        ] },
+      { date: '2026-11-04', dayLabel: 'Wed Nov 4', title: 'Embark · Singapore', location: 'Singapore', wedding: false,
+        activities: [
+          { id: 'sea-d1-embark', time: 'Embark', title: 'Board Oceania Nautica', meta: 'Concierge Veranda · cabin 7045 (deck 7) · reservation 8361 · confirm terminal & boarding time', icon: 'anchor', color: 'gold', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.oceaniacruises.com/login', label: 'Oceania check-in', icon: 'ship' },
+              { type: 'map', query: 'Singapore cruise terminal' },
+            ] },
+        ] },
+      { date: '2026-11-05', dayLabel: 'Thu Nov 5', title: 'Port Klang (Kuala Lumpur)', location: 'Port Klang · Malaysia', wedding: false,
+        activities: [
+          { id: 'sea-d2-port', time: 'Port day', title: 'Port Klang, Malaysia', meta: 'Gateway to Kuala Lumpur · KL city center ~1 hr inland', icon: 'anchor', color: 'teal',
+            links: [
+              { type: 'map', query: 'Port Klang Cruise Terminal Malaysia' },
+              { type: 'map', query: 'Kuala Lumpur city centre' },
+            ] },
+        ] },
+      { date: '2026-11-06', dayLabel: 'Fri Nov 6', title: 'Langkawi', location: 'Langkawi · Malaysia', wedding: false,
+        activities: [
+          { id: 'sea-d3-port', time: 'Port day', title: 'Langkawi, Malaysia', meta: 'Island stop · beaches, cable car & SkyBridge, mangrove tours', icon: 'anchor', color: 'teal',
+            links: [
+              { type: 'map', query: 'Langkawi Malaysia cruise port' },
+            ] },
+        ] },
+      { date: '2026-11-07', dayLabel: 'Sat Nov 7', title: 'At sea', location: 'At sea', wedding: false,
+        activities: [
+          { id: 'sea-d4-sea', time: 'At sea', title: 'Sea day', meta: 'Relax aboard · pool, dining, ship activities', icon: 'wave-sine', color: '' },
+        ] },
+      { date: '2026-11-08', dayLabel: 'Sun Nov 8', title: 'At sea', location: 'At sea', wedding: false,
+        activities: [
+          { id: 'sea-d5-sea', time: 'At sea', title: 'Sea day', meta: 'Relax aboard · pool, dining, ship activities', icon: 'wave-sine', color: '' },
+        ] },
+      { date: '2026-11-09', dayLabel: 'Mon Nov 9', title: 'Ho Chi Minh City', location: 'Ho Chi Minh City · Vietnam', wedding: false,
+        activities: [
+          { id: 'sea-d6-port', time: 'Port day', title: 'Ho Chi Minh City (day 1)', meta: 'Ship docks at Phu My · city is ~1.5–2 hr transfer · overnight in port', icon: 'anchor', color: 'teal',
+            links: [
+              { type: 'map', query: 'Phu My Port Vietnam' },
+              { type: 'map', query: 'Ho Chi Minh City center Vietnam' },
+            ] },
+        ] },
+      { date: '2026-11-10', dayLabel: 'Tue Nov 10', title: 'Ho Chi Minh City', location: 'Ho Chi Minh City · Vietnam', wedding: false,
+        activities: [
+          { id: 'sea-d7-port', time: 'Port day', title: 'Ho Chi Minh City (day 2)', meta: 'Second full day ashore before the ship sails', icon: 'anchor', color: 'teal',
+            links: [
+              { type: 'map', query: 'Ho Chi Minh City center Vietnam' },
+            ] },
+        ] },
+      { date: '2026-11-11', dayLabel: 'Wed Nov 11', title: 'At sea', location: 'At sea', wedding: false,
+        activities: [
+          { id: 'sea-d8-sea', time: 'At sea', title: 'Sea day', meta: 'Relax aboard · pool, dining, ship activities', icon: 'wave-sine', color: '' },
+        ] },
+      { date: '2026-11-12', dayLabel: 'Thu Nov 12', title: 'Ko Samui', location: 'Ko Samui · Thailand', wedding: false,
+        activities: [
+          { id: 'sea-d9-port', time: 'Port day', title: 'Ko Samui, Thailand', meta: 'Tender port (ship anchors offshore) · beaches, Big Buddha, waterfalls', icon: 'anchor', color: 'teal',
+            links: [
+              { type: 'map', query: 'Ko Samui Thailand' },
+            ] },
+        ] },
+      { date: '2026-11-13', dayLabel: 'Fri Nov 13', title: 'Disembark · Laem Chabang (Bangkok)', location: 'Laem Chabang · Thailand', wedding: false,
+        activities: [
+          { id: 'sea-d10-debark', time: 'Disembark', seq: 800, title: 'Arrive Laem Chabang (Bangkok)', meta: 'Disembark · transfer to Bangkok (~1.5–2 hr by road) · Park Hyatt for 2 nights', icon: 'anchor', color: 'rust', booked: true,
+            links: [
+              { type: 'map', query: 'Laem Chabang Cruise Terminal Thailand' },
+            ] },
+          { id: 'sea-phyatt-checkin', time: '4:00 pm', title: 'Check in · Park Hyatt Bangkok', meta: 'Central Embassy, 88 Wireless Rd · 1 King · conf 34864886', icon: 'bed', color: '', booked: true,
+            links: [
+              { type: 'map', query: 'Park Hyatt Bangkok Central Embassy Wireless Road' },
+            ] },
+        ] },
+      { date: '2026-11-15', dayLabel: 'Sun Nov 15', title: 'Fly home · Bangkok → Austin', location: 'Bangkok → Austin', wedding: false,
+        activities: [
+          { id: 'sea-fly-bkk-tpe', time: '1:45 pm', title: 'BKK → TPE', meta: 'STARLUX JX742 · Business · lands 6:25pm · 3h 40m', icon: 'plane', color: 'teal', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.starlux-airlines.com/en-US/booking/manage-my-trip/manage-my-trip', label: 'STARLUX check in', icon: 'plane' },
+            ] },
+          { id: 'sea-fly-tpe-phx', time: '8:45 pm', title: 'TPE → PHX', meta: 'STARLUX JX026 · Business · 12h 10m · lands 5:55pm same day (crosses date line)', icon: 'plane', color: 'teal', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.starlux-airlines.com/en-US/booking/manage-my-trip/manage-my-trip', label: 'STARLUX check in', icon: 'plane' },
+            ] },
+          { id: 'sea-fly-phx-aus', time: '8:39 pm', seq: 2046, title: 'PHX → AUS', meta: 'American AA1805 · Business · lands 11:59pm · 2h 20m · PHX Terminal 4', icon: 'plane', color: 'teal', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.aa.com/managetrips/findyourtrip', label: 'American check in', icon: 'plane' },
+            ] },
+        ] },
+    ],
+    lodging: [
+      { name: 'Andaz Singapore', address: '5 Fraser Street, Singapore 189354', dates: 'Sun Nov 1 → Tue Nov 3 · 2 nights', notes: 'Pre-cruise base · 1 King (LP Guestroom) · +65 6408 1234 · conf 17489386', mapsQuery: 'Andaz Singapore 5 Fraser Street' },
+      { name: 'JW Marriott Singapore South Beach', address: '30 Beach Road, Singapore 189763', dates: 'Tue Nov 3 → Wed Nov 4 · 1 night', notes: 'Pre-cruise night (fills the Nov 3 gap) · Deluxe Guest Room, 1 King · conf 73735073 · booked for 1 guest', mapsQuery: 'JW Marriott Hotel Singapore South Beach' },
+      { name: 'Oceania Nautica (cruise)', address: 'Embark Singapore → disembark Laem Chabang (Bangkok)', dates: 'Wed Nov 4 → Fri Nov 13 · 9 nights', notes: 'Concierge Level Veranda · cabin 7045 (deck 7) · reservation 8361', mapsQuery: 'Singapore cruise terminal' },
+      { name: 'Park Hyatt Bangkok', address: 'Central Embassy, 88 Wireless Road, Pathumwan, Bangkok 10330', dates: 'Fri Nov 13 → Sun Nov 15 · 2 nights', notes: 'Post-cruise base · 1 King (LP Guestroom) · +66 2 012 1234 · conf 34864886', mapsQuery: 'Park Hyatt Bangkok Central Embassy Wireless Road' },
+    ],
     venues: [],
-    tickets: { Flights: [], Hotels: [], Ferries: [], Activities: [] },
+    tickets: {
+      Flights: [
+        { confKey: 'sw-aus-sfo', carrier: 'southwest', name: 'Southwest 3582', route: 'AUS → SFO', sub: 'Fri Oct 30 · 9:50am – 11:40am · nonstop · 2 pax (Luke, Christy)', date: '2026-10-30', defaultConf: 'BLP62C' },
+        { confKey: 'sq-sfo-sin', carrier: 'singaporeair', name: 'Singapore Airlines SQ33', route: 'SFO → SIN', sub: 'Fri Oct 30 9:15pm → Sun Nov 1 5:45am · A350-900', date: '2026-10-30', defaultConf: 'EBVOQ2' },
+        { confKey: 'jx-bkk-tpe', carrier: 'starlux', name: 'STARLUX JX742', route: 'BKK → TPE', sub: 'Sun Nov 15 · 1:45pm – 6:25pm · Business', date: '2026-11-15', defaultConf: 'EMJOZQ' },
+        { confKey: 'jx-tpe-phx', carrier: 'starlux', name: 'STARLUX JX026', route: 'TPE → PHX', sub: 'Sun Nov 15 · 8:45pm – 5:55pm · Business · via date line', date: '2026-11-15', defaultConf: 'EMJOZQ' },
+        { confKey: 'aa-phx-aus', carrier: 'american', name: 'American AA1805', route: 'PHX → AUS', sub: 'Sun Nov 15 · 8:39pm – 11:59pm · Business · PHX T4', date: '2026-11-15', defaultConf: 'EMJOZQ' },
+      ],
+      Cruise: [
+        { confKey: 'oceania-nautica', carrier: 'oceania', name: 'Oceania Nautica', route: 'Singapore → Bangkok', sub: 'Wed Nov 4 → Fri Nov 13 · 9 nights · Concierge Veranda · cabin 7045', date: '2026-11-04', defaultConf: '8361' },
+      ],
+      Hotels: [
+        { confKey: 'andaz-sin', carrier: 'hyatt', name: 'Andaz Singapore', route: 'Singapore · pre-cruise', sub: 'Sun Nov 1 → Tue Nov 3 · 2 nights · 1 King', date: '2026-11-01', defaultConf: '17489386' },
+        { confKey: 'jw-sin', carrier: 'marriott', name: 'JW Marriott Singapore South Beach', route: 'Singapore · pre-cruise night', sub: 'Tue Nov 3 → Wed Nov 4 · 1 night · Deluxe King', date: '2026-11-03', defaultConf: '73735073' },
+        { confKey: 'phyatt-bkk', carrier: 'hyatt', name: 'Park Hyatt Bangkok', route: 'Bangkok · post-cruise', sub: 'Fri Nov 13 → Sun Nov 15 · 2 nights · 1 King', date: '2026-11-13', defaultConf: '34864886' },
+      ],
+      Ferries: [], Activities: [],
+    },
   },
 };
 
@@ -1190,6 +1331,27 @@ const CARRIERS = {
     homeUrl: 'https://www.aa.com/managetrips/findyourtrip',
     appName: 'American app',
   },
+  starlux: {
+    label: 'STARLUX Airlines', logo: 'plane',
+    manageUrl: (c) => 'https://www.starlux-airlines.com/en-US/booking/manage-my-trip/manage-my-trip',
+    emailQuery: (c) => c ? `from:starlux-airlines.com ${c}` : 'from:starlux-airlines.com confirmation',
+    homeUrl: 'https://www.starlux-airlines.com/en-US/booking/manage-my-trip/manage-my-trip',
+    appName: 'STARLUX app',
+  },
+  singaporeair: {
+    label: 'Singapore Airlines', logo: 'plane',
+    manageUrl: (c) => 'https://www.singaporeair.com/managebooking',
+    emailQuery: (c) => c ? `from:singaporeair.com ${c}` : 'from:singaporeair.com confirmation',
+    homeUrl: 'https://www.singaporeair.com/managebooking',
+    appName: 'Singapore Airlines app',
+  },
+  oceania: {
+    label: 'Oceania Cruises', logo: 'ship',
+    manageUrl: (c) => 'https://www.oceaniacruises.com/login',
+    emailQuery: (c) => c ? `from:oceaniacruises.com ${c}` : 'from:oceaniacruises.com confirmation',
+    homeUrl: 'https://www.oceaniacruises.com/login',
+    appName: 'Oceania My Account',
+  },
   virgin: {
     label: 'Virgin Atlantic', logo: 'plane',
     manageUrl: (c) => 'https://www.virginatlantic.com/manage-booking',
@@ -1387,6 +1549,13 @@ function dayContext(day) {
   if (loc.includes('london') || loc.includes('heathrow')) return { currency: 'GBP', tzLabel: '+6h' };
   if (loc.includes('miami')) return { currency: 'USD', tzLabel: '+1h' };
   if (loc.includes('austin')) return { currency: 'USD', tzLabel: '0' };
+  if (loc.includes('san francisco') || loc.includes('sfo')) return { currency: 'USD', tzLabel: '-2h' };
+  // Southeast Asia (Nov 2026 · Austin on CST after DST ends)
+  if (loc.includes('singapore')) return { currency: 'SGD', tzLabel: '+14h' };
+  if (loc.includes('malaysia') || loc.includes('langkawi') || loc.includes('klang')) return { currency: 'MYR', tzLabel: '+14h' };
+  if (loc.includes('vietnam') || loc.includes('ho chi minh')) return { currency: 'VND', tzLabel: '+13h' };
+  if (loc.includes('thailand') || loc.includes('samui') || loc.includes('bangkok') || loc.includes('chabang')) return { currency: 'THB', tzLabel: '+13h' };
+  if (loc.includes('at sea') || loc.includes('sea day')) return { currency: 'USD', tzLabel: '—' }; // onboard billing
   return { currency: '—', tzLabel: '—' };
 }
 
@@ -1865,7 +2034,10 @@ function activitiesForDay(day) {
   const hidden = getHiddenActivities();
   const manual = getManualActivities().filter(a => a.date === day.date);
   const all = [...day.activities.filter(a => !a.id || !hidden[a.id]), ...manual];
-  return all.slice().sort((a, b) => timeRank(a.time) - timeRank(b.time));
+  // Sort by clock time, but honor an optional `seq` hint. Needed for travel
+  // days that cross time zones / the date line, where departure clock-times
+  // aren't monotonic (e.g. TPE dep 8:45pm then PHX dep 8:39pm the same day).
+  return all.slice().sort((a, b) => (a.seq != null ? a.seq : timeRank(a.time)) - (b.seq != null ? b.seq : timeRank(b.time)));
 }
 
 /* Convert a time label to a sortable number. Handles "9:00 am", "Evening", etc. */
