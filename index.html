@@ -1077,9 +1077,14 @@ const TRIPS = {
         ] },
       { date: '2026-11-12', dayLabel: 'Thu Nov 12', title: 'Ko Samui', location: 'Ko Samui · Thailand', wedding: false,
         activities: [
-          { id: 'sea-d9-port', time: 'Port day', title: 'Ko Samui, Thailand', meta: 'Tender port (ship anchors offshore) · beaches, Big Buddha, waterfalls', icon: 'anchor', color: 'teal',
+          { id: 'sea-d9-port', time: 'Port day', seq: 1, title: 'Ko Samui, Thailand', meta: 'Tender port — ship anchors offshore, tender to Nathon', icon: 'anchor', color: 'teal',
             links: [
-              { type: 'map', query: 'Ko Samui Thailand' },
+              { type: 'map', query: 'Ko Samui cruise port Nathon' },
+            ] },
+          { id: 'sea-viator-samui-buggy', time: '9:00 am', title: 'Samui X Quad Premium 4WD Buggy Tour (w/ lunch)', meta: 'Meet Ko Samui cruise port · 2 adults · lunch included · booked via Viator · tender in early', icon: 'car', color: 'gold', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.viator.com/account/bookings', label: 'Manage (Viator)', icon: 'ticket' },
+              { type: 'map', query: 'Ko Samui cruise port' },
             ] },
         ] },
       { date: '2026-11-13', dayLabel: 'Fri Nov 13', title: 'Disembark · Laem Chabang (Bangkok)', location: 'Laem Chabang · Thailand', wedding: false,
@@ -1136,6 +1141,7 @@ const TRIPS = {
       Activities: [
         { confKey: 'viator-kl', carrier: 'viator', name: 'Private KL Full-Day Tour', route: 'Port Klang → Kuala Lumpur', sub: 'Thu Nov 5 · full day · private · 2 adults · $390 · booking ref 1448947613', date: '2026-11-05', defaultConf: '1830987945' },
         { confKey: 'viator-langkawi-jetski', carrier: 'viator', name: 'Langkawi Jet Ski Tour (Silver + drone)', route: 'Langkawi Cruise Centre', sub: 'Fri Nov 6 · 9:30am · 2 adults · $354.12 · booking ref 1447976209', date: '2026-11-06', defaultConf: '1830025201' },
+        { confKey: 'viator-samui-buggy', carrier: 'viator', name: 'Samui X Quad 4WD Buggy Tour (w/ lunch)', route: 'Ko Samui', sub: 'Thu Nov 12 · 9:00am · 2 adults · $277 · lunch · booking ref 1448003871', date: '2026-11-12', defaultConf: '1830052555' },
       ],
     },
   },
