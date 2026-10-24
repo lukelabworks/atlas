@@ -1000,18 +1000,23 @@ const TRIPS = {
             links: [
               { type: 'map', query: 'Singapore Changi Airport' },
             ] },
+          { id: 'headout-gardens', time: '9:00 am', title: 'Gardens by the Bay — domes + Supertree Observatory', meta: 'Cloud Forest (Jurassic World), Flower Dome, Floral Fantasy & Supertree Observatory · 2 adults · Observatory entry before 4 PM · Headout ref PP-3518302', icon: 'tree', color: 'gold', booked: true,
+            links: [
+              { type: 'map', query: 'Gardens by the Bay 18 Marina Gardens Drive Singapore' },
+              { type: 'url', url: 'https://www.headout.com', label: 'Headout app', icon: 'ticket' },
+            ] },
+          { id: 'headout-mbs-skypark', time: '11:00 am', title: 'Marina Bay Sands SkyPark Observation Deck', meta: 'Admission · 2 adults · booked via Headout', icon: 'building', color: 'gold', booked: true,
+            links: [
+              { type: 'map', query: 'Marina Bay Sands SkyPark Observation Deck Singapore' },
+              { type: 'url', url: 'https://www.headout.com', label: 'Headout app', icon: 'ticket' },
+            ] },
           { id: 'sea-andaz-checkin', time: '3:00 pm', title: 'Check in · Andaz Singapore', meta: '5 Fraser Street · 1 King · conf 17489386 · ask about early bag drop after the morning landing', icon: 'bed', color: '', booked: true,
             links: [
               { type: 'map', query: 'Andaz Singapore 5 Fraser Street' },
             ] },
         ] },
-      { date: '2026-11-02', dayLabel: 'Mon Nov 2', title: 'Singapore · Gardens & Marina Bay', location: 'Singapore', wedding: false,
+      { date: '2026-11-02', dayLabel: 'Mon Nov 2', title: 'Singapore · evening river cruise', location: 'Singapore', wedding: false,
         activities: [
-          { id: 'headout-gardens', time: 'Afternoon', title: 'Gardens by the Bay — domes + Supertree Observatory', meta: 'Cloud Forest (Jurassic World), Flower Dome, Floral Fantasy & Supertree Observatory · 2 adults · open ticket · Observatory entry before 4 PM · Headout ref PP-3518302', icon: 'tree', color: 'gold', booked: true,
-            links: [
-              { type: 'map', query: 'Gardens by the Bay 18 Marina Gardens Drive Singapore' },
-              { type: 'url', url: 'https://www.headout.com', label: 'Headout app', icon: 'ticket' },
-            ] },
           { id: 'viator-sg-starlight', time: '5:30 pm', title: 'Singapore River Cruise, Night Garden Rhapsody & Spectra', meta: 'Meet 5:30pm at Starbucks One Fullerton (#01-04) · bumboat river cruise, Supertree light show & Spectra · 2 adults · booked via Viator', icon: 'sailboat', color: 'gold', booked: true,
             links: [
               { type: 'url', url: 'https://www.viator.com/account/bookings', label: 'Manage (Viator)', icon: 'ticket' },
@@ -1176,7 +1181,8 @@ const TRIPS = {
         { confKey: 'viator-langkawi-jetski', carrier: 'viator', name: 'Langkawi Jet Ski Tour (Silver + drone)', route: 'Langkawi Cruise Centre', sub: 'Fri Nov 6 · 9:30am · 2 adults · $354.12 · booking ref 1447976209', date: '2026-11-06', defaultConf: '1830025201' },
         { confKey: 'viator-samui-buggy', carrier: 'viator', name: 'Samui X Quad 4WD Buggy Tour (w/ lunch)', route: 'Ko Samui', sub: 'Thu Nov 12 · 9:00am · 2 adults · $277 · lunch · booking ref 1448003871', date: '2026-11-12', defaultConf: '1830052555' },
         { confKey: 'viator-hcmc', carrier: 'viator', name: 'Private Ho Chi Minh City Shore Excursion', route: 'Phu My → Ho Chi Minh City', sub: 'Mon Nov 9 · 8:00am · 2 adults · private · $230 · booking ref 1447995037', date: '2026-11-09', defaultConf: '1830043821' },
-        { confKey: 'headout-gardens', carrier: 'headout', name: 'Gardens by the Bay (domes + Observatory)', route: 'Singapore · pre-cruise', sub: 'Mon Nov 2 · open/flexible ticket · 2 adults · Observatory before 4 PM', date: '2026-11-02', defaultConf: 'PP-3518302' },
+        { confKey: 'headout-gardens', carrier: 'headout', name: 'Gardens by the Bay (domes + Observatory)', route: 'Singapore · pre-cruise', sub: 'Sun Nov 1 · 9:00am · 2 adults · Observatory before 4 PM', date: '2026-11-01', defaultConf: 'PP-3518302' },
+        { confKey: 'headout-mbs', carrier: 'headout', name: 'Marina Bay Sands SkyPark Observation Deck', route: 'Singapore · pre-cruise', sub: 'Sun Nov 1 · 11:00am · 2 adults · admission', date: '2026-11-01', defaultConf: '' },
         { confKey: 'viator-sg-starlight', carrier: 'viator', name: 'Singapore River Cruise, Rhapsody & Spectra', route: 'Singapore · evening', sub: 'Mon Nov 2 · 5:30pm · 2 adults · $128.18 · booking ref 1458161571', date: '2026-11-02', defaultConf: '1840129045' },
       ],
     },
