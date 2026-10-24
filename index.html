@@ -1004,6 +1004,11 @@ const TRIPS = {
             links: [
               { type: 'map', query: 'Andaz Singapore 5 Fraser Street' },
             ] },
+          { id: 'headout-gardens', time: 'Flexible', title: 'Gardens by the Bay — domes + Supertree Observatory', meta: 'Cloud Forest (Jurassic World), Flower Dome, Floral Fantasy & Supertree Observatory · 2 adults · open ticket, valid across your Singapore days · Observatory entry before 4 PM · Headout ref PP-3518302', icon: 'tree', color: 'gold', booked: true,
+            links: [
+              { type: 'map', query: 'Gardens by the Bay 18 Marina Gardens Drive Singapore' },
+              { type: 'url', url: 'https://www.headout.com', label: 'Headout app', icon: 'ticket' },
+            ] },
         ] },
       { date: '2026-11-03', dayLabel: 'Tue Nov 3', title: 'Singapore · last day before the cruise', location: 'Singapore', wedding: false,
         activities: [
@@ -1147,6 +1152,7 @@ const TRIPS = {
         { confKey: 'viator-langkawi-jetski', carrier: 'viator', name: 'Langkawi Jet Ski Tour (Silver + drone)', route: 'Langkawi Cruise Centre', sub: 'Fri Nov 6 · 9:30am · 2 adults · $354.12 · booking ref 1447976209', date: '2026-11-06', defaultConf: '1830025201' },
         { confKey: 'viator-samui-buggy', carrier: 'viator', name: 'Samui X Quad 4WD Buggy Tour (w/ lunch)', route: 'Ko Samui', sub: 'Thu Nov 12 · 9:00am · 2 adults · $277 · lunch · booking ref 1448003871', date: '2026-11-12', defaultConf: '1830052555' },
         { confKey: 'viator-hcmc', carrier: 'viator', name: 'Private Ho Chi Minh City Shore Excursion', route: 'Phu My → Ho Chi Minh City', sub: 'Mon Nov 9 · 8:00am · 2 adults · private · $230 · booking ref 1447995037', date: '2026-11-09', defaultConf: '1830043821' },
+        { confKey: 'headout-gardens', carrier: 'headout', name: 'Gardens by the Bay (domes + Observatory)', route: 'Singapore · pre-cruise', sub: 'Nov 1 · open/flexible ticket · 2 adults · Observatory before 4 PM', date: '2026-11-01', defaultConf: 'PP-3518302' },
       ],
     },
   },
@@ -1424,6 +1430,13 @@ const CARRIERS = {
     emailQuery: (c) => c ? `from:viator.com ${c}` : 'from:viator.com booking',
     homeUrl: 'https://www.viator.com/account/bookings',
     appName: 'Viator app',
+  },
+  headout: {
+    label: 'Headout', logo: 'ticket',
+    manageUrl: (c) => 'https://www.headout.com',
+    emailQuery: (c) => c ? `from:headout.com ${c}` : 'from:headout.com booking',
+    homeUrl: 'https://www.headout.com',
+    appName: 'Headout app',
   },
   krilo: {
     label: 'Krilo (Kapetan Luka)', logo: 'ship',
