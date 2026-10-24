@@ -1038,9 +1038,14 @@ const TRIPS = {
         ] },
       { date: '2026-11-06', dayLabel: 'Fri Nov 6', title: 'Langkawi', location: 'Langkawi · Malaysia', wedding: false,
         activities: [
-          { id: 'sea-d3-port', time: 'Port day', title: 'Langkawi, Malaysia', meta: 'Island stop · beaches, cable car & SkyBridge, mangrove tours', icon: 'anchor', color: 'teal',
+          { id: 'sea-d3-port', time: 'Port day', seq: 1, title: 'Langkawi, Malaysia', meta: 'Docked · island stop', icon: 'anchor', color: 'teal',
             links: [
-              { type: 'map', query: 'Langkawi Malaysia cruise port' },
+              { type: 'map', query: 'Langkawi Cruise Centre' },
+            ] },
+          { id: 'sea-viator-langkawi-jetski', time: '9:30 am', title: 'Langkawi Jet Ski Tour (Silver + drone video)', meta: 'Meet Langkawi Cruise Centre · 2 adults · free cancellation to 24h · booked via Viator', icon: 'kayak', color: 'gold', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.viator.com/account/bookings', label: 'Manage (Viator)', icon: 'ticket' },
+              { type: 'map', query: 'Langkawi Cruise Centre' },
             ] },
         ] },
       { date: '2026-11-07', dayLabel: 'Sat Nov 7', title: 'At sea', location: 'At sea', wedding: false,
@@ -1130,6 +1135,7 @@ const TRIPS = {
       Ferries: [],
       Activities: [
         { confKey: 'viator-kl', carrier: 'viator', name: 'Private KL Full-Day Tour', route: 'Port Klang → Kuala Lumpur', sub: 'Thu Nov 5 · full day · private · 2 adults · $390 · booking ref 1448947613', date: '2026-11-05', defaultConf: '1830987945' },
+        { confKey: 'viator-langkawi-jetski', carrier: 'viator', name: 'Langkawi Jet Ski Tour (Silver + drone)', route: 'Langkawi Cruise Centre', sub: 'Fri Nov 6 · 9:30am · 2 adults · $354.12 · booking ref 1447976209', date: '2026-11-06', defaultConf: '1830025201' },
       ],
     },
   },
