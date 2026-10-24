@@ -1026,9 +1026,13 @@ const TRIPS = {
         ] },
       { date: '2026-11-05', dayLabel: 'Thu Nov 5', title: 'Port Klang (Kuala Lumpur)', location: 'Port Klang · Malaysia', wedding: false,
         activities: [
-          { id: 'sea-d2-port', time: 'Port day', title: 'Port Klang, Malaysia', meta: 'Gateway to Kuala Lumpur · KL city center ~1 hr inland', icon: 'anchor', color: 'teal',
+          { id: 'sea-d2-port', time: 'Port day', seq: 1, title: 'Port Klang, Malaysia', meta: 'Docked · gateway to Kuala Lumpur (~1 hr inland)', icon: 'anchor', color: 'teal',
             links: [
               { type: 'map', query: 'Port Klang Cruise Terminal Malaysia' },
+            ] },
+          { id: 'sea-viator-kl', time: 'Morning', title: 'Private Kuala Lumpur Full-Day Tour', meta: 'Private full-day tour from the port · 2 adults · free cancellation to 24h · booked via Viator', icon: 'car', color: 'gold', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.viator.com/account/bookings', label: 'Manage (Viator)', icon: 'ticket' },
               { type: 'map', query: 'Kuala Lumpur city centre' },
             ] },
         ] },
@@ -1123,7 +1127,10 @@ const TRIPS = {
         { confKey: 'jw-sin', carrier: 'marriott', name: 'JW Marriott Singapore South Beach', route: 'Singapore · pre-cruise night', sub: 'Tue Nov 3 → Wed Nov 4 · 1 night · Deluxe King', date: '2026-11-03', defaultConf: '73735073' },
         { confKey: 'phyatt-bkk', carrier: 'hyatt', name: 'Park Hyatt Bangkok', route: 'Bangkok · post-cruise', sub: 'Fri Nov 13 → Sun Nov 15 · 2 nights · 1 King', date: '2026-11-13', defaultConf: '34864886' },
       ],
-      Ferries: [], Activities: [],
+      Ferries: [],
+      Activities: [
+        { confKey: 'viator-kl', carrier: 'viator', name: 'Private KL Full-Day Tour', route: 'Port Klang → Kuala Lumpur', sub: 'Thu Nov 5 · full day · private · 2 adults · $390 · booking ref 1448947613', date: '2026-11-05', defaultConf: '1830987945' },
+      ],
     },
   },
 };
