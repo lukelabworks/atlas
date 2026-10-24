@@ -1058,9 +1058,13 @@ const TRIPS = {
         ] },
       { date: '2026-11-09', dayLabel: 'Mon Nov 9', title: 'Ho Chi Minh City', location: 'Ho Chi Minh City · Vietnam', wedding: false,
         activities: [
-          { id: 'sea-d6-port', time: 'Port day', title: 'Ho Chi Minh City (day 1)', meta: 'Ship docks at Phu My · city is ~1.5–2 hr transfer · overnight in port', icon: 'anchor', color: 'teal',
+          { id: 'sea-d6-port', time: 'Port day', seq: 1, title: 'Ho Chi Minh City (day 1)', meta: 'Docks at Phu My (~1.5–2 hr to the city) · overnight in port', icon: 'anchor', color: 'teal',
             links: [
               { type: 'map', query: 'Phu My Port Vietnam' },
+            ] },
+          { id: 'sea-viator-hcmc', time: '8:00 am', title: 'Private Ho Chi Minh City Shore Excursion', meta: 'From Phu My (~1.5–2 hr each way) · private · 2 adults · free cancellation to 24h · booked via Viator', icon: 'car', color: 'gold', booked: true,
+            links: [
+              { type: 'url', url: 'https://www.viator.com/account/bookings', label: 'Manage (Viator)', icon: 'ticket' },
               { type: 'map', query: 'Ho Chi Minh City center Vietnam' },
             ] },
         ] },
@@ -1142,6 +1146,7 @@ const TRIPS = {
         { confKey: 'viator-kl', carrier: 'viator', name: 'Private KL Full-Day Tour', route: 'Port Klang → Kuala Lumpur', sub: 'Thu Nov 5 · full day · private · 2 adults · $390 · booking ref 1448947613', date: '2026-11-05', defaultConf: '1830987945' },
         { confKey: 'viator-langkawi-jetski', carrier: 'viator', name: 'Langkawi Jet Ski Tour (Silver + drone)', route: 'Langkawi Cruise Centre', sub: 'Fri Nov 6 · 9:30am · 2 adults · $354.12 · booking ref 1447976209', date: '2026-11-06', defaultConf: '1830025201' },
         { confKey: 'viator-samui-buggy', carrier: 'viator', name: 'Samui X Quad 4WD Buggy Tour (w/ lunch)', route: 'Ko Samui', sub: 'Thu Nov 12 · 9:00am · 2 adults · $277 · lunch · booking ref 1448003871', date: '2026-11-12', defaultConf: '1830052555' },
+        { confKey: 'viator-hcmc', carrier: 'viator', name: 'Private Ho Chi Minh City Shore Excursion', route: 'Phu My → Ho Chi Minh City', sub: 'Mon Nov 9 · 8:00am · 2 adults · private · $230 · booking ref 1447995037', date: '2026-11-09', defaultConf: '1830043821' },
       ],
     },
   },
