@@ -3009,23 +3009,53 @@ Respond with ONLY a JSON array of objects, no other text or markdown fences. Eac
    Live rates via frankfurter.app (no key, ECB data). Falls back to
    baked-in approximate rates if offline. Base reference is USD.
    =========================================== */
-// Approximate fallback rates (per 1 USD) — only used if the live fetch fails offline.
-const FALLBACK_RATES = { USD: 1, EUR: 0.92, GBP: 0.79, HRK: 6.95 };
+// Currencies we request from the live feed (per 1 USD base).
+const LIVE_CURRENCIES = ['EUR', 'GBP', 'SGD', 'MYR', 'THB', 'VND'];
+// Approximate fallback rates (per 1 USD) — used offline, or for any currency
+// the live feed doesn't carry (e.g. VND is not an ECB reference rate).
+const FALLBACK_RATES = { USD: 1, EUR: 0.92, GBP: 0.79, SGD: 1.30, MYR: 4.25, THB: 32.5, VND: 26000, HRK: 6.95 };
 let cachedRates = null;
 
 async function fetchRates() {
   if (cachedRates) return cachedRates;
   try {
     // frankfurter.app: free, no API key, returns rates relative to a base
-    const res = await fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP');
+    const res = await fetch('https://api.frankfurter.app/latest?from=USD&to=' + LIVE_CURRENCIES.join(','));
     if (!res.ok) throw new Error('rate fetch failed');
     const data = await res.json();
-    cachedRates = { USD: 1, EUR: data.rates.EUR, GBP: data.rates.GBP, _live: true, _date: data.date };
+    const rates = { USD: 1, _live: true, _date: data.date, _approx: [] };
+    for (const cur of LIVE_CURRENCIES) {
+      if (data.rates && typeof data.rates[cur] === 'number') {
+        rates[cur] = data.rates[cur];
+      } else {
+        // Feed didn't carry this one (e.g. VND on the ECB endpoint) — use static fallback.
+        rates[cur] = FALLBACK_RATES[cur];
+        rates._approx.push(cur);
+      }
+    }
+    cachedRates = rates;
     return cachedRates;
   } catch (e) {
-    cachedRates = { ...FALLBACK_RATES, _live: false };
+    cachedRates = { ...FALLBACK_RATES, _live: false, _approx: [] };
     return cachedRates;
   }
+}
+
+// Format a converted amount for a number input (no thousands separators):
+// large values (VND) round to whole numbers, smaller ones keep 2 decimals.
+function ccAmt(n) {
+  if (!isFinite(n)) return '';
+  return Math.abs(n) >= 1000 ? String(Math.round(n)) : n.toFixed(2);
+}
+// Format a rate for the label line (commas OK here — it's text, not an input).
+function ccRateFmt(r) {
+  return r >= 1000 ? Math.round(r).toLocaleString() : r.toFixed(3);
+}
+// Live/approx/offline suffix for the rate line, given the target currency.
+function ccRateNote(rates, cur) {
+  if (!rates._live) return '· offline estimate';
+  if (rates._approx && rates._approx.includes(cur)) return '· approx rate (not on live feed)';
+  return `· live (${rates._date})`;
 }
 
 function openCurrencyConverter() {
@@ -3034,8 +3064,9 @@ function openCurrencyConverter() {
   const days = t.days || [];
   let viewIdx = days.findIndex(d => d.date === state.viewingDate);
   if (viewIdx < 0) viewIdx = 0;
-  const localCurrency = days.length ? dayContext(days[viewIdx]).currency : 'EUR';
-  const local = ['EUR', 'GBP', 'USD'].includes(localCurrency) ? localCurrency : 'EUR';
+  const localCurrency = days.length ? dayContext(days[viewIdx]).currency : 'USD';
+  const SUPPORTED = ['USD', 'EUR', 'GBP', 'SGD', 'MYR', 'THB', 'VND'];
+  const local = SUPPORTED.includes(localCurrency) ? localCurrency : 'USD';
   const home = 'USD'; // Austin home currency
 
   document.getElementById('app').classList.add('modal-open');
@@ -3068,7 +3099,7 @@ function openCurrencyConverter() {
     const rEl = document.getElementById('cc-rate');
     if (!rEl) return;
     const rate = rates[local] / rates[home];
-    rEl.innerHTML = `1 ${home} = ${rate.toFixed(3)} ${local} ${rates._live ? `· live (${rates._date})` : '· offline estimate'}`;
+    rEl.innerHTML = `1 ${home} = ${ccRateFmt(rate)} ${local} ${ccRateNote(rates, local)}`;
     ccConvert('a');
     // Preset chips
     const presets = [10, 25, 50, 100];
@@ -3081,7 +3112,7 @@ function openCurrencyConverter() {
 let ccState = { from: 'USD', to: 'EUR' };
 
 function ccSymbol(cur) {
-  return { USD: '$', EUR: '€', GBP: '£' }[cur] || '';
+  return { USD: '$', EUR: '€', GBP: '£', SGD: 'S$', MYR: 'RM', THB: '฿', VND: '₫' }[cur] || '';
 }
 
 async function ccConvert(source) {
@@ -3092,10 +3123,10 @@ async function ccConvert(source) {
   const rate = rates[ccState.to] / rates[ccState.from];
   if (source === 'a') {
     const v = parseFloat(a.value);
-    b.value = isNaN(v) ? '' : (v * rate).toFixed(2);
+    b.value = isNaN(v) ? '' : ccAmt(v * rate);
   } else {
     const v = parseFloat(b.value);
-    a.value = isNaN(v) ? '' : (v / rate).toFixed(2);
+    a.value = isNaN(v) ? '' : ccAmt(v / rate);
   }
 }
 
@@ -3106,7 +3137,7 @@ function ccSwap() {
   fetchRates().then(rates => {
     const rate = rates[ccState.to] / rates[ccState.from];
     const rEl = document.getElementById('cc-rate');
-    if (rEl) rEl.innerHTML = `1 ${ccState.from} = ${rate.toFixed(3)} ${ccState.to} ${rates._live ? `· live (${rates._date})` : '· offline estimate'}`;
+    if (rEl) rEl.innerHTML = `1 ${ccState.from} = ${ccRateFmt(rate)} ${ccState.to} ${ccRateNote(rates, ccState.to)}`;
     document.getElementById('cc-presets').innerHTML = [10,25,50,100].map(p =>
       `<button onclick="ccPreset(${p})">${ccSymbol(ccState.from)}${p}</button>`
     ).join('');
