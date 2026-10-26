@@ -9,7 +9,7 @@
    This means: update index.html on GitHub -> open the app -> it self-updates.
 */
 
-const CACHE_VERSION = 'atlas-v30';
+const CACHE_VERSION = 'atlas-v31';
 const CORE_ASSETS = ['./', './index.html'];
 
 // Install: pre-cache the core shell, then activate immediately.

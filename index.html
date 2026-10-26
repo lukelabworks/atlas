@@ -1715,7 +1715,8 @@ function saveIdeas(list) {
    Check-off state, custom items, and hidden defaults persist
    per trip in localStorage, surviving app updates.
    =========================================== */
-const DEFAULT_PACKING = [
+const PACKING_BY_TRIP = {
+  croatia2026: [
   { cat: "Tops", items: [
     { id: "pack-top-wedshirt", label: "White cotton/linen blend shirt", tag: "have", note: "Wedding shirt + dresses up a nice dinner." },
     { id: "pack-top-ltblue", label: "Light blue SS linen shirt", tag: "have", note: "Welcome-drinks shirt under the jacket; daytime staple." },
@@ -1814,7 +1815,119 @@ const DEFAULT_PACKING = [
     { id: "pack-aid-laundry", label: "Laundry bag", tag: "add", note: "Mid-trip wash at Amfora." },
     { id: "pack-aid-ziploc", label: "A few zip-locks", tag: "add", note: "Wet swimwear + snacks." }
   ]}
-];
+  ],
+  seasia2026: [
+  { cat: "Luggage & strategy", items: [
+    { id: "sea-strat-bag", label: "One large check bag each + carry-on", tag: null, note: "Business-class return carries it; costumes + eveningwear won't fit a carry-on alone." },
+    { id: "sea-strat-daybag", label: "Packable day backpack", tag: "add", note: "Port tours, markets, SkyPark — holds water, rain shell, sunscreen." },
+    { id: "sea-strat-laundry", label: "Plan a mid-cruise laundry wash", tag: null, note: "Nautica has laundry — resets daytime wear ~day 5 so you pack fewer tropical sets." },
+    { id: "sea-strat-share", label: "Share base pieces across themes", tag: null, note: "Black covers Orchid Noir / Forbidden Desire / Eclipse; white covers Neon & White Heat." },
+    { id: "sea-strat-carryon", label: "Carry-on: 1 night + swimsuit + meds + docs", tag: null, note: "If a checked bag is late to the ship you can still embark and swim." }
+  ]},
+  { cat: "Daytime & tropical wear", items: [
+    { id: "sea-day-tees", label: "Breathable tees / tanks — 6–7", tag: "add", note: "Hot + very humid (mid-80s–90s°F). Merino/synthetic dries overnight." },
+    { id: "sea-day-shirts", label: "Linen SS shirts — 2", tag: "have", note: "Sightseeing + relaxed lunches; hide sweat better than cotton." },
+    { id: "sea-day-shorts", label: "Shorts — 3", tag: null, note: "Daily heat default off the ship." },
+    { id: "sea-day-sundress", label: "Her: sundresses / light outfits — 3–4", tag: "add", note: "Coolest option in the humidity." },
+    { id: "sea-day-active", label: "Quick-dry activewear set", tag: "add", note: "Buggy day + any walking in the heat." },
+    { id: "sea-day-rain", label: "Packable rain shell / compact umbrella", tag: "add", note: "Nov is the tail of Singapore's wet season — afternoon downpours." }
+  ]},
+  { cat: "Temple-appropriate", items: [
+    { id: "sea-temple-pants", label: "Lightweight long pants — 1 each", tag: "add", note: "Batu Caves, HCMC pagodas, Bangkok Grand Palace all require covered knees." },
+    { id: "sea-temple-top", label: "Shoulder-covering top — 1 each", tag: "add", note: "No bare shoulders in temples; Grand Palace enforces it strictly." },
+    { id: "sea-temple-scarf", label: "Her: light scarf / shawl", tag: "add", note: "Instant shoulder cover; doubles as sun/AC layer." }
+  ]},
+  { cat: "Cruise dinners & evenings", items: [
+    { id: "sea-dine-him", label: "Him: collared shirts + dress trousers — 2–3", tag: null, note: "Polo Grill + Toscana are 'country club casual' — no shorts/tees at dinner." },
+    { id: "sea-dine-her", label: "Her: dinner dresses — 2–3", tag: "add", note: "Resort-elegant; mixes with the theme-night pieces." },
+    { id: "sea-dine-shoes", label: "Dress shoes / dressy sandals", tag: null, note: "One pair each covers dinners + most theme nights." },
+    { id: "sea-dine-jacket", label: "Him: linen blazer — optional", tag: "add", note: "Lifts a specialty dinner or a formal theme without bulk." }
+  ]},
+  { cat: "Theme nights (one costume each)", items: [
+    { id: "sea-theme-orchid", label: "Orchid Noir (opening): black + orchid accent", tag: "add", note: "Nov 4 · him black shirt/trousers + deep-purple accent; her LBD or black set + orchid hair flower." },
+    { id: "sea-theme-forbidden", label: "Forbidden Desire: black & red / leather", tag: "add", note: "Nov 5 · him black shirt + red accents; her red-and-black corset or slip, leather-look details." },
+    { id: "sea-theme-silk", label: "Irresistible Silk: his/hers silk robes", tag: "add", note: "Nov 6 · matching silk robes over luxe sleepwear — packs flat, weighs nothing." },
+    { id: "sea-theme-neon", label: "Neon Nirvana: white + glow", tag: "add", note: "Nov 7 · white/neon outfits + glow jewelry; toss in glow bands (UV-reactive pops)." },
+    { id: "sea-theme-eclipse", label: "Alluring Eclipse: black & gold + masks", tag: "add", note: "Nov 8 · black-and-gold formal; pack 2 masquerade masks (near-weightless)." },
+    { id: "sea-theme-school", label: "Desire Schoolyard: uniform role-play", tag: "add", note: "Nov 9 · him shirt + tie + suspenders; her pleated skirt + tie." },
+    { id: "sea-theme-white", label: "White Heat: head-to-toe white", tag: "add", note: "Nov 10 · white linen for him, white dress for her — reuse White pieces from Neon night." },
+    { id: "sea-theme-bangkok", label: "Bangkok After Dark: club-chic / glitter", tag: "add", note: "Nov 11 · bold color or metallic; her fishnets + heels, his dark fitted shirt." },
+    { id: "sea-theme-eden", label: "Eden Unleashed (farewell): your best look", tag: "add", note: "Nov 12 · the sharpest, most attractive outfit you brought — the one you feel best in." }
+  ]},
+  { cat: "Pool parties & swim", items: [
+    { id: "sea-pool-velvet", label: "Velvet Tides swimwear: black/ivory/champagne", tag: "add", note: "Nov 7 pool party — elegant, muted tones." },
+    { id: "sea-pool-island", label: "Island Vibes: tropical swim + sarong", tag: "add", note: "Nov 8 pool party — bright/tropical; sarong doubles as cover-up." },
+    { id: "sea-pool-society", label: "The Pool Society: monochrome resort swim", tag: "add", note: "Nov 11 pool party — single-color resort-glam look." },
+    { id: "sea-swim-extra", label: "Swimwear — 2–3 more sets each", tag: "add", note: "Jet ski, buggy waterfall, sea-day pools; rotate so one's always dry." },
+    { id: "sea-swim-coverup", label: "Cover-ups / rash guard", tag: "add", note: "6+ hrs sun on the jet-ski day." }
+  ]},
+  { cat: "Activity gear", items: [
+    { id: "sea-act-watershoes", label: "Water shoes", tag: "add", note: "Jet ski, Ko Samui waterfall, tender docks." },
+    { id: "sea-act-drybag", label: "Dry bag 10L + waterproof phone pouch", tag: "add", note: "Jet-ski day soaks everything; buggy day is dusty." },
+    { id: "sea-act-gopro", label: "GoPro / action cam + mounts", tag: "add", note: "Jet ski + buggy; drone video is included on the Langkawi tour." },
+    { id: "sea-act-buggy", label: "Clothes you don't mind trashing (buggy)", tag: null, note: "Ko Samui 4WD gets muddy/dusty; closed-toe shoes required." }
+  ]},
+  { cat: "Shoes", items: [
+    { id: "sea-shoe-walk", label: "Broken-in walking shoes", tag: null, note: "KL + HCMC + Bangkok are big walking days in heat." },
+    { id: "sea-shoe-sandal", label: "Comfortable sandals", tag: null, note: "Default off-ship + pool." },
+    { id: "sea-shoe-flip", label: "Flip-flops", tag: "add", note: "Pool deck + cabin." }
+  ]},
+  { cat: "Toiletries & sun", items: [
+    { id: "sea-toi-sun", label: "Reef-safe sunscreen SPF 50+", tag: "add", note: "Reef-safe matters for the marine stops; bring enough — pricey locally." },
+    { id: "sea-toi-after", label: "Aloe / after-sun", tag: "add", note: "Equatorial sun is no joke." },
+    { id: "sea-toi-lip", label: "SPF lip balm", tag: null, note: "" },
+    { id: "sea-toi-std", label: "Toothbrush, deodorant, razor, etc.", tag: null, note: "Ship + all hotels stock basics, but bring your own." },
+    { id: "sea-toi-hair", label: "Hair product + styling for theme nights", tag: null, note: "" },
+    { id: "sea-toi-cologne", label: "Cologne / perfume (small decant)", tag: null, note: "" },
+    { id: "sea-toi-wipes", label: "Face wipes + hand sanitizer", tag: "add", note: "Markets, buggy day, long transfers." }
+  ]},
+  { cat: "Health & meds", items: [
+    { id: "sea-med-rx", label: "Prescriptions (+ several extra days)", tag: null, note: "Keep in carry-on, in original bottles." },
+    { id: "sea-med-motion", label: "Motion-sickness (Bonine / patch / bands)", tag: "add", note: "Cruise + 2 tender ports + jet ski + buggy. Take before, not after." },
+    { id: "sea-med-bug", label: "DEET / picaridin insect repellent", tag: "add", note: "Dengue risk; rural Vietnam + Thailand especially. Dusk is prime." },
+    { id: "sea-med-dia", label: "Traveler's diarrhea kit (Imodium + rehydration salts)", tag: "add", note: "Street food + market food — be ready." },
+    { id: "sea-med-pain", label: "Ibuprofen / Tylenol + antacid", tag: null, note: "" },
+    { id: "sea-med-anti", label: "Antihistamine", tag: null, note: "Bites, heat rash, stings." },
+    { id: "sea-med-blister", label: "Blister bandages", tag: "add", note: "Hot-weather walking days." },
+    { id: "sea-med-mel", label: "Melatonin", tag: "add", note: "~13–14 hr shift from Austin — worst jet lag of the trip." },
+    { id: "sea-med-kit", label: "Mini first-aid kit", tag: null, note: "" }
+  ]},
+  { cat: "Documents", items: [
+    { id: "sea-doc-passport", label: "Passports — valid 6+ months past Nov 15", tag: null, note: "Oceania denies boarding without it (flagged on the boarding pass)." },
+    { id: "sea-doc-vietnam", label: "VERIFY: Vietnam visa for the HCMC overnight", tag: "add", note: "Cruise shore-excursion calls are often visa-exempt, but you booked an independent tour on an overnight-in-port call — confirm with Oceania/Desire before you go." },
+    { id: "sea-doc-cruise", label: "Oceania boarding passes (booking 4128730)", tag: null, note: "Printed + on phone; terminal arrival 1:00 PM Nov 4." },
+    { id: "sea-doc-viator", label: "All Viator / Headout vouchers", tag: null, note: "KL, Langkawi, HCMC, Samui, Bangkok markets, Singapore cruise, Gardens, SkyPark." },
+    { id: "sea-doc-hotels", label: "Hotel confirmations", tag: null, note: "Andaz, JW Marriott, Park Hyatt." },
+    { id: "sea-doc-flights", label: "Flight confirmations — all legs", tag: null, note: "SW, Singapore Airlines (EBVOQ2), STARLUX/AA (EMJOZQ)." },
+    { id: "sea-doc-insurance", label: "Travel insurance + emergency numbers", tag: null, note: "" },
+    { id: "sea-doc-scan", label: "Scan everything to a shared cloud folder", tag: null, note: "Share with Christy before you leave." }
+  ]},
+  { cat: "Money & cards", items: [
+    { id: "sea-money-card", label: "No-FX-fee card + backup on another network", tag: null, note: "" },
+    { id: "sea-money-cash", label: "USD cash to exchange + small bills for tips", tag: "add", note: "USD exchanges everywhere; keep small notes for markets + tipping guides." },
+    { id: "sea-money-notify", label: "Notify banks: SG, MY, VN, TH · Oct 30–Nov 15", tag: null, note: "Four countries in two weeks trips fraud holds." },
+    { id: "sea-money-wallet", label: "Slim travel wallet", tag: null, note: "" }
+  ]},
+  { cat: "Electronics & power", items: [
+    { id: "sea-elec-adapter", label: "Universal travel adapter — 2", tag: "add", note: "SG/MY use Type G (UK); Thailand + Vietnam differ; ship is US+EU. One universal covers all." },
+    { id: "sea-elec-brick", label: "Multi-port USB-C GaN charger", tag: "add", note: "Handles 220V; one brick for all devices." },
+    { id: "sea-elec-bank", label: "Power bank 20,000 mAh", tag: "add", note: "Full-day tours with no outlets; carry in hand luggage on flights." },
+    { id: "sea-elec-phone", label: "Phones + cables", tag: null, note: "" },
+    { id: "sea-elec-esim", label: "eSIM / international plan per country", tag: "add", note: "An Asia regional eSIM beats roaming across 4 countries." },
+    { id: "sea-elec-offline", label: "Download offline maps + entertainment", tag: null, note: "Each city + the 17.5-hr flight." },
+    { id: "sea-elec-head", label: "Noise-canceling headphones", tag: null, note: "Long-haul essential." }
+  ]},
+  { cat: "Packing aids & misc", items: [
+    { id: "sea-aid-cubes", label: "Packing cubes", tag: "add", note: "Separate daytime / dinner / theme-night so you're not digging." },
+    { id: "sea-aid-ziploc", label: "Zip-locks + a few trash bags", tag: "add", note: "Wet swimwear, muddy buggy clothes, dirty laundry." },
+    { id: "sea-aid-laundrybag", label: "Laundry bag", tag: "add", note: "For the mid-cruise wash." },
+    { id: "sea-aid-lanyard", label: "Lanyard for the ship key card", tag: "add", note: "You'll use it constantly onboard." },
+    { id: "sea-aid-bottle", label: "Reusable water bottle", tag: null, note: "Refill on the ship; stay ahead of the heat." },
+    { id: "sea-aid-steamer", label: "Travel steamer / wrinkle spray", tag: "add", note: "Linen + theme-night pieces arrive creased." }
+  ]}
+  ]
+};
+function packingList() { return PACKING_BY_TRIP[state.currentTrip] || PACKING_BY_TRIP.croatia2026 || []; }
 
 function getPackState() {
   try { return JSON.parse(localStorage.getItem(userKey('pack')) || '{}'); } catch (e) { return {}; }
@@ -1826,7 +1939,7 @@ function packCategories() {
   const st = getPackState();
   const hidden = st.hidden || {};
   const custom = st.custom || [];
-  const cats = DEFAULT_PACKING.map(c => ({ cat: c.cat, items: c.items.filter(it => !hidden[it.id]) }));
+  const cats = packingList().map(c => ({ cat: c.cat, items: c.items.filter(it => !hidden[it.id]) }));
   if (custom.length) {
     const map = {};
     custom.forEach(it => { (map[it.cat] = map[it.cat] || []).push(it); });
@@ -1922,7 +2035,7 @@ function togglePackItem(id) {
 }
 function allPackCategories() {
   // Built-in categories + any custom ones the user has created, de-duplicated, in order.
-  const names = DEFAULT_PACKING.map(c => c.cat);
+  const names = packingList().map(c => c.cat);
   const st = getPackState();
   (st.custom || []).forEach(it => { if (it.cat && !names.includes(it.cat)) names.push(it.cat); });
   return names;
@@ -1973,7 +2086,8 @@ const FAB = {
   suede:'#ccbd9e', p448:'#f0eee6', birk:'#8a5a39', water:'#3a4046',
   line:'rgba(21,37,44,0.34)'
 };
-const OUTFITS = [
+const OUTFITS_BY_TRIP = {
+  croatia2026: [
   { group: "Wedding & evening", looks: [
     { n: 1, name: "Ceremony — formal", fit: "Sage linen suit + linen-cotton wedding shirt", shoes: "Suede slip-ons", note: "Optional knit tie + pocket square. Steam it the night before.", viz:{ top:{t:'jacket',c:FAB.sage,inner:FAB.wedding,pattern:'tie'}, bottom:{t:'pants',c:FAB.sage}, shoes:{t:'slipon',c:FAB.suede} } },
     { n: 2, name: "Welcome drinks — cocktail", fit: "Sage suit jacket + light blue linen shirt (open collar) + khaki chinos", shoes: "Suede slip-ons", note: "Relaxed cocktail — the jacket does the work, no tie needed.", viz:{ top:{t:'jacket',c:FAB.sage,inner:FAB.lightblue}, bottom:{t:'pants',c:FAB.khaki}, shoes:{t:'slipon',c:FAB.suede} } },
@@ -2002,7 +2116,10 @@ const OUTFITS = [
     { n: 19, name: "Lazy resort morning", fit: "Grey polo + khaki linen shorts", shoes: "Birkenstocks", note: "", viz:{ top:{t:'polo',c:FAB.grey}, bottom:{t:'shorts',c:FAB.khaki}, shoes:{t:'sandal',c:FAB.birk} } },
     { n: 20, name: "Travel day", fit: "Navy linen over a grey tee + navy chinos", shoes: "P448", note: "Hides wrinkles across the flights + the catamaran.", viz:{ top:{t:'shirtLS',c:FAB.navy}, bottom:{t:'pants',c:FAB.navyChino}, shoes:{t:'sneaker',c:FAB.p448} } }
   ]}
-];
+  ],
+  seasia2026: []
+};
+function outfitsList() { return OUTFITS_BY_TRIP[state.currentTrip] || []; }
 function vTop(t, color, inner, pattern) {
   const cx = 100, ln = FAB.line, s = [];
   if (t === 'jacket' || t === 'shirtLS') {
@@ -2083,8 +2200,13 @@ function renderPackOutfits() {
   const host = document.getElementById('pack-outfits-host');
   if (!host) return;
   const shoeIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h2l1.5 9a2 2 0 0 0 2 1.5h9a1 1 0 0 0 1 -1.2l-.8 -3.3a2 2 0 0 0 -1.5 -1.5l-4.7 -1l-2.2 -2.5a2 2 0 0 0 -1.5 -.7h-1.8"/><path d="M4 6v-2"/></svg>';
+  const groups = outfitsList();
+  if (!groups.length) {
+    host.innerHTML = '<div class="outfit-intro">Visual outfit boards aren\'t set up for this trip. Your theme-night costumes, cruise-dinner looks, and daily capsule are all in the <b>Checklist</b> tab — see the “Theme nights,” “Cruise dinners,” and “Daytime &amp; tropical wear” sections.</div>';
+    return;
+  }
   let html = '<div class="outfit-intro">20 looks from your kit — every piece pulls double duty, so a small carry-on covers every occasion.</div>';
-  OUTFITS.forEach(g => {
+  groups.forEach(g => {
     html += `<div class="section-label pack-cat"><span class="label">${g.group}</span><span class="line"></span></div><div class="outfit-list">`;
     g.looks.forEach(o => {
       html += `<div class="outfit-card">
