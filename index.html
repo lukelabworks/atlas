@@ -422,6 +422,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .outfit-shoes { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 7px; }
 .outfit-shoes .icon { width: 14px; height: 14px; flex-shrink: 0; }
 .outfit-note { font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 7px; font-style: italic; }
+.lookbook-photo { position: relative; display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 300px; border-radius: var(--radius-sm); overflow: hidden; background: var(--paper-3); border: 0.5px solid var(--line-soft); margin-bottom: 12px; }
+.lookbook-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lookbook-fallback { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 16px; background: linear-gradient(135deg, var(--paper-2), var(--paper-3)); }
+.lookbook-fallback .lf-t { font-family: var(--serif); font-size: 15px; color: var(--ink-2); }
+.lookbook-fallback .lf-s { font-size: 12px; color: var(--muted); }
+.lookbook-for { display: flex; gap: 9px; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; margin-top: 3px; }
+.lookbook-for b { color: var(--ink); font-weight: 600; min-width: 32px; }
+.lookbook-see { display: inline-flex; align-items: center; gap: 5px; margin-top: 11px; font-size: 12px; font-weight: 500; color: var(--rust); text-decoration: none; }
+.lookbook-see .icon { width: 13px; height: 13px; }
 
 /* SVG icon base — sized to match the surrounding font-size */
 .icon { width: 1em; height: 1em; flex-shrink: 0; display: inline-block; vertical-align: -0.15em; }
@@ -1843,16 +1852,16 @@ const PACKING_BY_TRIP = {
     { id: "sea-dine-shoes", label: "Dress shoes / dressy sandals", tag: null, note: "One pair each covers dinners + most theme nights." },
     { id: "sea-dine-jacket", label: "Him: linen blazer — optional", tag: "add", note: "Lifts a specialty dinner or a formal theme without bulk." }
   ]},
-  { cat: "Theme nights (one costume each)", items: [
-    { id: "sea-theme-orchid", label: "Orchid Noir (opening): black + orchid accent", tag: "add", note: "Nov 4 · him black shirt/trousers + deep-purple accent; her LBD or black set + orchid hair flower." },
-    { id: "sea-theme-forbidden", label: "Forbidden Desire: black & red / leather", tag: "add", note: "Nov 5 · him black shirt + red accents; her red-and-black corset or slip, leather-look details." },
-    { id: "sea-theme-silk", label: "Irresistible Silk: his/hers silk robes", tag: "add", note: "Nov 6 · matching silk robes over luxe sleepwear — packs flat, weighs nothing." },
-    { id: "sea-theme-neon", label: "Neon Nirvana: white + glow", tag: "add", note: "Nov 7 · white/neon outfits + glow jewelry; toss in glow bands (UV-reactive pops)." },
-    { id: "sea-theme-eclipse", label: "Alluring Eclipse: black & gold + masks", tag: "add", note: "Nov 8 · black-and-gold formal; pack 2 masquerade masks (near-weightless)." },
-    { id: "sea-theme-school", label: "Desire Schoolyard: uniform role-play", tag: "add", note: "Nov 9 · him shirt + tie + suspenders; her pleated skirt + tie." },
-    { id: "sea-theme-white", label: "White Heat: head-to-toe white", tag: "add", note: "Nov 10 · white linen for him, white dress for her — reuse White pieces from Neon night." },
-    { id: "sea-theme-bangkok", label: "Bangkok After Dark: club-chic / glitter", tag: "add", note: "Nov 11 · bold color or metallic; her fishnets + heels, his dark fitted shirt." },
-    { id: "sea-theme-eden", label: "Eden Unleashed (farewell): your best look", tag: "add", note: "Nov 12 · the sharpest, most attractive outfit you brought — the one you feel best in." }
+  { cat: "Theme nights (pack your costume)", items: [
+    { id: "sea-theme-orchid", label: "Orchid Noir (opening)", tag: "add", note: "Nov 4 · dress code: black with orchid accents." },
+    { id: "sea-theme-forbidden", label: "Forbidden Desire", tag: "add", note: "Nov 5 · dress code: bold black & red, leather-inspired, corsets." },
+    { id: "sea-theme-silk", label: "Irresistible Silk", tag: "add", note: "Nov 6 · dress code: silk robes, luxe or pajama-style sleepwear." },
+    { id: "sea-theme-neon", label: "Neon Nirvana", tag: "add", note: "Nov 7 · dress code: neon & white, glow paint, mesh & glow accessories." },
+    { id: "sea-theme-eclipse", label: "Alluring Eclipse", tag: "add", note: "Nov 8 · dress code: black & gold formal, masks, metallic textures." },
+    { id: "sea-theme-school", label: "Desire Schoolyard", tag: "add", note: "Nov 9 · dress code: role-play — skirts, ties, suspenders, uniforms." },
+    { id: "sea-theme-white", label: "White Heat", tag: "add", note: "Nov 10 · dress code: all white or light, flowing fabrics." },
+    { id: "sea-theme-bangkok", label: "Bangkok After Dark", tag: "add", note: "Nov 11 · dress code: club-chic, bold colors, glitter, fishnets." },
+    { id: "sea-theme-eden", label: "Eden Unleashed (farewell)", tag: "add", note: "Nov 12 · dress code: your most attractive outfit of the trip." }
   ]},
   { cat: "Pool parties & swim", items: [
     { id: "sea-pool-velvet", label: "Velvet Tides swimwear: black/ivory/champagne", tag: "add", note: "Nov 7 pool party — elegant, muted tones." },
@@ -2120,6 +2129,33 @@ const OUTFITS_BY_TRIP = {
   seasia2026: []
 };
 function outfitsList() { return OUTFITS_BY_TRIP[state.currentTrip] || []; }
+
+/* STYLE GUIDE — photo lookbook for non-costume looks. Images are pulled live
+   from the web by keyword (real photos), with a graceful fallback + a
+   "see real looks" Pinterest link on every card. Theme-night costumes are
+   intentionally excluded (the user supplies those). */
+function lookImg(keywords, lock) { return `https://loremflickr.com/400/500/${encodeURIComponent(keywords)}?lock=${lock}`; }
+function pinUrl(q) { return `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(q)}`; }
+const STYLE_GUIDE_BY_TRIP = {
+  seasia2026: [
+    { group: "Days ashore", looks: [
+      { name: "Singapore city & Marina Bay", him: "Linen short-sleeve shirt + tailored shorts (or lightweight trousers) + sneakers; sunglasses.", her: "Breezy midi sundress + comfy sandals + sun hat.", note: "Hot + very humid, lots of photos — breathable fabrics, nothing that shows sweat.", img: "singapore,city,summer,outfit", lock: 21, pin: "singapore sightseeing outfit hot humid summer" },
+      { name: "Temple days (modest)", him: "Lightweight long pants + short-sleeve collared shirt (shoulders covered); slip-on walking shoes.", her: "Long skirt or loose trousers + sleeved top + a scarf for shoulders.", note: "Batu Caves, HCMC pagodas & Bangkok Grand Palace all require covered knees + shoulders.", img: "temple,modest,travel,outfit,asia", lock: 22, pin: "temple visit outfit covered shoulders knees modest travel" },
+      { name: "Port tour days (hot walking)", him: "Moisture-wicking polo or tee + shorts + cap + broken-in walking shoes.", her: "Breathable top + skort or shorts + cap + crossbody bag.", note: "KL and HCMC city tours are long days on your feet in the heat.", img: "travel,walking,city,tour,summer", lock: 23, pin: "city walking tour hot weather travel outfit" },
+      { name: "Bangkok markets & casual", him: "Soft tee + shorts + light sneakers; crossbody for phone + cash.", her: "Sundress or shorts + airy top + crossbody bag + hat.", note: "Early market mornings — cool, casual, hands-free.", img: "bangkok,market,street,casual,outfit", lock: 24, pin: "bangkok market casual travel outfit" }
+    ]},
+    { group: "On the water & active", looks: [
+      { name: "Active & water days", him: "Swim trunks under quick-dry shorts + rash guard + water shoes; waterproof phone pouch.", her: "Swimsuit under quick-dry set + rash guard + water shoes.", note: "Langkawi jet ski (soaks you) + Ko Samui buggy (dusty/muddy, closed shoes required).", img: "beach,watersport,activewear,outfit", lock: 25, pin: "jet ski beach water activity outfit rashguard" },
+      { name: "Cruise daytime & pool", him: "Swim trunks + linen overshirt + sandals + sunglasses.", her: "Swimsuit + kaftan or cover-up + hat + sandals.", note: "Sea days and lounging — not the themed pool parties (those are in your checklist).", img: "resort,poolside,cruise,outfit", lock: 26, pin: "resort pool day outfit cover up cruise" }
+    ]},
+    { group: "Evenings & travel", looks: [
+      { name: "Specialty dinners (country-club casual)", him: "Collared shirt (or linen blazer) + dress trousers + loafers. No shorts at Polo Grill / Toscana.", her: "Resort-elegant dress + dressy sandals or low heels.", note: "Oceania's specialty restaurants are smart-casual — this covers non-theme dinner nights too.", img: "smart,casual,dinner,elegant,resort", lock: 27, pin: "country club casual cruise dinner outfit resort elegant" },
+      { name: "Long-haul travel days", him: "Soft tee + overshirt or merino layer + stretch chinos/joggers + slip-on sneakers.", her: "Comfortable set or leggings + oversized layer + slip-ons; scarf doubles as a blanket.", note: "17.5-hr flights + big time shift — layers for cabin AC, easy on/off shoes.", img: "airport,travel,comfortable,outfit", lock: 28, pin: "long haul flight travel day comfortable outfit" }
+    ]}
+  ]
+};
+function styleGuide() { return STYLE_GUIDE_BY_TRIP[state.currentTrip] || null; }
+
 function vTop(t, color, inner, pattern) {
   const cx = 100, ln = FAB.line, s = [];
   if (t === 'jacket' || t === 'shirtLS') {
@@ -2200,9 +2236,34 @@ function renderPackOutfits() {
   const host = document.getElementById('pack-outfits-host');
   if (!host) return;
   const shoeIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h2l1.5 9a2 2 0 0 0 2 1.5h9a1 1 0 0 0 1 -1.2l-.8 -3.3a2 2 0 0 0 -1.5 -1.5l-4.7 -1l-2.2 -2.5a2 2 0 0 0 -1.5 -.7h-1.8"/><path d="M4 6v-2"/></svg>';
+  // Photo style guide (e.g. Southeast Asia) takes precedence when defined.
+  const guide = styleGuide();
+  if (guide) {
+    const pinIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg>';
+    let gh = '<div class="outfit-intro">Style guide for everything except the theme nights (those are your own costumes). Each look is a formula built from your packing list — tap any photo to open real looks on Pinterest. Photos load live from the web, so they vary and need a connection.</div>';
+    guide.forEach(g => {
+      gh += `<div class="section-label pack-cat"><span class="label">${g.group}</span><span class="line"></span></div><div class="outfit-list">`;
+      g.looks.forEach(o => {
+        gh += `<div class="outfit-card">
+          <a class="lookbook-photo" href="${pinUrl(o.pin)}" target="_blank" rel="noopener">
+            <img src="${lookImg(o.img, o.lock)}" alt="${o.name} look reference" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.lookbook-fallback').style.display='flex';">
+            <div class="lookbook-fallback"><div class="lf-t">${o.name}</div><div class="lf-s">Tap to see real looks on Pinterest →</div></div>
+          </a>
+          <div class="outfit-head"><span class="outfit-name">${o.name}</span></div>
+          <div class="lookbook-for"><b>Him</b><span>${o.him}</span></div>
+          <div class="lookbook-for"><b>Her</b><span>${o.her}</span></div>
+          ${o.note ? `<div class="outfit-note">${o.note}</div>` : ''}
+          <a class="lookbook-see" href="${pinUrl(o.pin)}" target="_blank" rel="noopener">${pinIcon} See real looks on Pinterest</a>
+        </div>`;
+      });
+      gh += '</div>';
+    });
+    host.innerHTML = gh;
+    return;
+  }
   const groups = outfitsList();
   if (!groups.length) {
-    host.innerHTML = '<div class="outfit-intro">Visual outfit boards aren\'t set up for this trip. Your theme-night costumes, cruise-dinner looks, and daily capsule are all in the <b>Checklist</b> tab — see the “Theme nights,” “Cruise dinners,” and “Daytime &amp; tropical wear” sections.</div>';
+    host.innerHTML = '<div class="outfit-intro">Visual outfit boards aren\'t set up for this trip.</div>';
     return;
   }
   let html = '<div class="outfit-intro">20 looks from your kit — every piece pulls double duty, so a small carry-on covers every occasion.</div>';
