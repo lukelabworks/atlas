@@ -2130,31 +2130,47 @@ const OUTFITS_BY_TRIP = {
 };
 function outfitsList() { return OUTFITS_BY_TRIP[state.currentTrip] || []; }
 
-/* STYLE GUIDE — photo lookbook for non-costume looks. Images are pulled live
-   from the web by keyword (real photos), with a graceful fallback + a
-   "see real looks" Pinterest link on every card. Theme-night costumes are
-   intentionally excluded (the user supplies those). */
-function lookImg(keywords, lock) { return `https://loremflickr.com/400/500/${encodeURIComponent(keywords)}?lock=${lock}`; }
-function pinUrl(q) { return `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(q)}`; }
-const STYLE_GUIDE_BY_TRIP = {
-  seasia2026: [
-    { group: "Days ashore", looks: [
-      { name: "Singapore city & Marina Bay", him: "Linen short-sleeve shirt + tailored shorts (or lightweight trousers) + sneakers; sunglasses.", her: "Breezy midi sundress + comfy sandals + sun hat.", note: "Hot + very humid, lots of photos — breathable fabrics, nothing that shows sweat.", img: "singapore,city,summer,outfit", lock: 21, pin: "singapore sightseeing outfit hot humid summer" },
-      { name: "Temple days (modest)", him: "Lightweight long pants + short-sleeve collared shirt (shoulders covered); slip-on walking shoes.", her: "Long skirt or loose trousers + sleeved top + a scarf for shoulders.", note: "Batu Caves, HCMC pagodas & Bangkok Grand Palace all require covered knees + shoulders.", img: "temple,modest,travel,outfit,asia", lock: 22, pin: "temple visit outfit covered shoulders knees modest travel" },
-      { name: "Port tour days (hot walking)", him: "Moisture-wicking polo or tee + shorts + cap + broken-in walking shoes.", her: "Breathable top + skort or shorts + cap + crossbody bag.", note: "KL and HCMC city tours are long days on your feet in the heat.", img: "travel,walking,city,tour,summer", lock: 23, pin: "city walking tour hot weather travel outfit" },
-      { name: "Bangkok markets & casual", him: "Soft tee + shorts + light sneakers; crossbody for phone + cash.", her: "Sundress or shorts + airy top + crossbody bag + hat.", note: "Early market mornings — cool, casual, hands-free.", img: "bangkok,market,street,casual,outfit", lock: 24, pin: "bangkok market casual travel outfit" }
-    ]},
-    { group: "On the water & active", looks: [
-      { name: "Active & water days", him: "Swim trunks under quick-dry shorts + rash guard + water shoes; waterproof phone pouch.", her: "Swimsuit under quick-dry set + rash guard + water shoes.", note: "Langkawi jet ski (soaks you) + Ko Samui buggy (dusty/muddy, closed shoes required).", img: "beach,watersport,activewear,outfit", lock: 25, pin: "jet ski beach water activity outfit rashguard" },
-      { name: "Cruise daytime & pool", him: "Swim trunks + linen overshirt + sandals + sunglasses.", her: "Swimsuit + kaftan or cover-up + hat + sandals.", note: "Sea days and lounging — not the themed pool parties (those are in your checklist).", img: "resort,poolside,cruise,outfit", lock: 26, pin: "resort pool day outfit cover up cruise" }
-    ]},
-    { group: "Evenings & travel", looks: [
-      { name: "Specialty dinners (country-club casual)", him: "Collared shirt (or linen blazer) + dress trousers + loafers. No shorts at Polo Grill / Toscana.", her: "Resort-elegant dress + dressy sandals or low heels.", note: "Oceania's specialty restaurants are smart-casual — this covers non-theme dinner nights too.", img: "smart,casual,dinner,elegant,resort", lock: 27, pin: "country club casual cruise dinner outfit resort elegant" },
-      { name: "Long-haul travel days", him: "Soft tee + overshirt or merino layer + stretch chinos/joggers + slip-on sneakers.", her: "Comfortable set or leggings + oversized layer + slip-ons; scarf doubles as a blanket.", note: "17.5-hr flights + big time shift — layers for cabin AC, easy on/off shoes.", img: "airport,travel,comfortable,outfit", lock: 28, pin: "long haul flight travel day comfortable outfit" }
-    ]}
-  ]
+/* MEN'S CAPSULE — one defined look per activity, built from a lean kit of
+   named pieces. The packing list at the bottom is COMPILED from the pieces
+   the looks actually use (each piece shows which activities wear it), so the
+   capsule and the list can't drift apart. Theme-night costumes are excluded
+   (the user supplies those). */
+const MENS_CAPSULE_BY_TRIP = {
+  seasia2026: {
+    pieces: [
+      { id: "linen-stone", cat: "Tops", label: "Stone/white linen SS shirt" },
+      { id: "linen-navy",  cat: "Tops", label: "Navy (or printed) linen SS shirt" },
+      { id: "tees",        cat: "Tops", label: "Performance tees ×4 (breathable)" },
+      { id: "polo",        cat: "Tops", label: "Polo ×2 (smart-casual)" },
+      { id: "rashguard",   cat: "Tops", label: "Rash guard" },
+      { id: "overshirt",   cat: "Tops", label: "Packable overshirt / merino layer" },
+      { id: "shorts",      cat: "Bottoms", label: "Tailored shorts ×2 (chino/tech)" },
+      { id: "active-shorts", cat: "Bottoms", label: "Quick-dry active shorts" },
+      { id: "trousers",    cat: "Bottoms", label: "Lightweight long trousers (linen/tech)" },
+      { id: "trunks",      cat: "Bottoms", label: "Swim trunks ×2" },
+      { id: "sneakers",    cat: "Shoes", label: "Walking sneakers (broken in)" },
+      { id: "sandals",     cat: "Shoes", label: "Leather sandals" },
+      { id: "watershoes",  cat: "Shoes", label: "Water shoes" },
+      { id: "flipflops",   cat: "Shoes", label: "Flip-flops" },
+      { id: "cap",         cat: "Accessories", label: "Cap / packable hat" },
+      { id: "shades",      cat: "Accessories", label: "Polarized sunglasses" },
+      { id: "belt",        cat: "Accessories", label: "Leather belt" },
+      { id: "rainshell",   cat: "Accessories", label: "Packable rain shell" }
+    ],
+    looks: [
+      { act: "Long-haul travel days", days: "Oct 30 · Nov 15", items: ["tees","overshirt","trousers","sneakers"], note: "17.5-hr flights + big time shift — layers for cabin AC, easy on/off shoes." },
+      { act: "Singapore city & Marina Bay", days: "Nov 1–2", items: ["linen-stone","shorts","sandals","shades","cap","belt","rainshell"], note: "Hot + humid; the linen shirt dresses up for the evening river cruise. Nov is wet season — pack the shell." },
+      { act: "Temple days (Batu Caves · HCMC · Grand Palace)", days: "Nov 5 · 9 · 14", items: ["linen-navy","trousers","sneakers","belt"], note: "Collared shirt covers shoulders, trousers cover knees — enforced at the Grand Palace." },
+      { act: "Port city tours (hot walking)", days: "Nov 5 · 9–10", items: ["tees","shorts","sneakers","cap","shades","rainshell"], note: "Long sweaty days on foot in KL + HCMC." },
+      { act: "Langkawi jet ski", days: "Nov 6", items: ["rashguard","trunks","watershoes"], note: "You'll be soaked — rash guard for sun, waterproof phone pouch (in the kit bag)." },
+      { act: "Ko Samui 4WD buggy", days: "Nov 12", items: ["tees","active-shorts","sneakers","trunks","watershoes"], note: "Closed-toe required; wear sneakers you don't mind trashing, trunks underneath + water shoes for the waterfall." },
+      { act: "Cruise sea days & pool (daytime)", days: "Nov 7 · 8 · 11", items: ["trunks","linen-stone","flipflops","shades"], note: "Lounging — not the themed pool parties (those costumes are in your checklist)." },
+      { act: "Specialty dinners (Polo Grill · Toscana)", days: "Nov 4 · 6 · 10 · 11", items: ["polo","trousers","sandals","belt"], note: "Country-club casual — collar + trousers, no shorts. One of your linen shirts swaps in for a dressier night." },
+      { act: "Bangkok markets & casual", days: "Nov 14", items: ["polo","shorts","sneakers","cap"], note: "Early, casual, hands-free." }
+    ]
+  }
 };
-function styleGuide() { return STYLE_GUIDE_BY_TRIP[state.currentTrip] || null; }
+function mensCapsule() { return MENS_CAPSULE_BY_TRIP[state.currentTrip] || null; }
 
 function vTop(t, color, inner, pattern) {
   const cx = 100, ln = FAB.line, s = [];
@@ -2236,28 +2252,41 @@ function renderPackOutfits() {
   const host = document.getElementById('pack-outfits-host');
   if (!host) return;
   const shoeIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h2l1.5 9a2 2 0 0 0 2 1.5h9a1 1 0 0 0 1 -1.2l-.8 -3.3a2 2 0 0 0 -1.5 -1.5l-4.7 -1l-2.2 -2.5a2 2 0 0 0 -1.5 -.7h-1.8"/><path d="M4 6v-2"/></svg>';
-  // Photo style guide (e.g. Southeast Asia) takes precedence when defined.
-  const guide = styleGuide();
-  if (guide) {
-    const pinIcon = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg>';
-    let gh = '<div class="outfit-intro">Style guide for everything except the theme nights (those are your own costumes). Each look is a formula built from your packing list — tap any photo to open real looks on Pinterest. Photos load live from the web, so they vary and need a connection.</div>';
-    guide.forEach(g => {
-      gh += `<div class="section-label pack-cat"><span class="label">${g.group}</span><span class="line"></span></div><div class="outfit-list">`;
-      g.looks.forEach(o => {
-        gh += `<div class="outfit-card">
-          <a class="lookbook-photo" href="${pinUrl(o.pin)}" target="_blank" rel="noopener">
-            <img src="${lookImg(o.img, o.lock)}" alt="${o.name} look reference" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.lookbook-fallback').style.display='flex';">
-            <div class="lookbook-fallback"><div class="lf-t">${o.name}</div><div class="lf-s">Tap to see real looks on Pinterest →</div></div>
-          </a>
-          <div class="outfit-head"><span class="outfit-name">${o.name}</span></div>
-          <div class="lookbook-for"><b>Him</b><span>${o.him}</span></div>
-          <div class="lookbook-for"><b>Her</b><span>${o.her}</span></div>
-          ${o.note ? `<div class="outfit-note">${o.note}</div>` : ''}
-          <a class="lookbook-see" href="${pinUrl(o.pin)}" target="_blank" rel="noopener">${pinIcon} See real looks on Pinterest</a>
-        </div>`;
-      });
-      gh += '</div>';
+  // Men's capsule (e.g. Southeast Asia): one look per activity, then a
+  // packing list COMPILED from the pieces those looks use.
+  const cap = mensCapsule();
+  if (cap) {
+    const byId = {}; cap.pieces.forEach(p => { byId[p.id] = p; });
+    // Derive, per piece, which activities wear it.
+    const usedBy = {};
+    cap.looks.forEach(lk => lk.items.forEach(id => { (usedBy[id] = usedBy[id] || []).push(lk.act); }));
+    let gh = '<div class="outfit-intro">One look per activity, built as a lean men\'s capsule — every piece earns its spot by pulling multiple days. The <b>packing kit</b> at the bottom is compiled straight from these looks (theme-night costumes are separate, in your Checklist).</div>';
+    // The looks
+    gh += `<div class="section-label pack-cat"><span class="label">The looks</span><span class="line"></span></div><div class="outfit-list">`;
+    cap.looks.forEach(o => {
+      const outfit = o.items.map(id => (byId[id] ? byId[id].label : id)).join(' + ');
+      gh += `<div class="outfit-card">
+        <div class="outfit-head"><span class="outfit-name">${o.act}</span></div>
+        ${o.days ? `<div class="outfit-shoes" style="margin-top:2px;">${o.days}</div>` : ''}
+        <div class="outfit-formula" style="margin-top:7px;">${outfit}</div>
+        ${o.note ? `<div class="outfit-note">${o.note}</div>` : ''}
+      </div>`;
     });
+    gh += '</div>';
+    // The compiled kit, grouped by category, each piece showing its uses
+    const cats = ["Tops","Bottoms","Shoes","Accessories"];
+    gh += `<div class="section-label pack-cat"><span class="label">The packing kit — what it all compiles to</span><span class="line"></span></div><div class="outfit-list">`;
+    cats.forEach(catName => {
+      const inCat = cap.pieces.filter(p => p.cat === catName && usedBy[p.id]);
+      if (!inCat.length) return;
+      gh += `<div class="outfit-card"><div class="outfit-head"><span class="outfit-name" style="font-size:14px;">${catName}</span></div>`;
+      inCat.forEach(p => {
+        const n = (usedBy[p.id] || []).length;
+        gh += `<div class="lookbook-for" style="margin-top:6px;"><b style="min-width:0;">•</b><span>${p.label} <span style="color:var(--muted);">— ${n} ${n === 1 ? 'use' : 'uses'}</span></span></div>`;
+      });
+      gh += `</div>`;
+    });
+    gh += '</div>';
     host.innerHTML = gh;
     return;
   }
