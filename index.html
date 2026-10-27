@@ -2158,19 +2158,25 @@ const MENS_CAPSULE_BY_TRIP = {
       { id: "rainshell",   cat: "Accessories", label: "Packable rain shell" }
     ],
     looks: [
-      { act: "Long-haul travel days", days: "Oct 30 · Nov 15", items: ["tees","overshirt","trousers","sneakers"], note: "17.5-hr flights + big time shift — layers for cabin AC, easy on/off shoes." },
-      { act: "Singapore city & Marina Bay", days: "Nov 1–2", items: ["linen-stone","shorts","sandals","shades","cap","belt","rainshell"], note: "Hot + humid; the linen shirt dresses up for the evening river cruise. Nov is wet season — pack the shell." },
-      { act: "Temple days (Batu Caves · HCMC · Grand Palace)", days: "Nov 5 · 9 · 14", items: ["linen-navy","trousers","sneakers","belt"], note: "Collared shirt covers shoulders, trousers cover knees — enforced at the Grand Palace." },
-      { act: "Port city tours (hot walking)", days: "Nov 5 · 9–10", items: ["tees","shorts","sneakers","cap","shades","rainshell"], note: "Long sweaty days on foot in KL + HCMC." },
-      { act: "Langkawi jet ski", days: "Nov 6", items: ["rashguard","trunks","watershoes"], note: "You'll be soaked — rash guard for sun, waterproof phone pouch (in the kit bag)." },
-      { act: "Ko Samui 4WD buggy", days: "Nov 12", items: ["tees","active-shorts","sneakers","trunks","watershoes"], note: "Closed-toe required; wear sneakers you don't mind trashing, trunks underneath + water shoes for the waterfall." },
-      { act: "Cruise sea days & pool (daytime)", days: "Nov 7 · 8 · 11", items: ["trunks","linen-stone","flipflops","shades"], note: "Lounging — not the themed pool parties (those costumes are in your checklist)." },
-      { act: "Specialty dinners (Polo Grill · Toscana)", days: "Nov 4 · 6 · 10 · 11", items: ["polo","trousers","sandals","belt"], note: "Country-club casual — collar + trousers, no shorts. One of your linen shirts swaps in for a dressier night." },
-      { act: "Bangkok markets & casual", days: "Nov 14", items: ["polo","shorts","sneakers","cap"], note: "Early, casual, hands-free." }
+      { act: "Long-haul travel days", days: "Oct 30 · Nov 15", items: ["tees","overshirt","trousers","sneakers"], note: "17.5-hr flights + big time shift — layers for cabin AC, easy on/off shoes.", img: "grey performance t-shirt, lightweight overshirt, stretch chino trousers, slip-on sneakers", seed: 101 },
+      { act: "Singapore city & Marina Bay", days: "Nov 1–2", items: ["linen-stone","shorts","sandals","shades","cap","belt","rainshell"], note: "Hot + humid; the linen shirt dresses up for the evening river cruise. Nov is wet season — pack the shell.", img: "stone linen short-sleeve shirt, tailored navy shorts, brown leather sandals, sunglasses, cap, leather belt", seed: 102 },
+      { act: "Temple days (Batu Caves · HCMC · Grand Palace)", days: "Nov 5 · 9 · 14", items: ["linen-navy","trousers","sneakers","belt"], note: "Collared shirt covers shoulders, trousers cover knees — enforced at the Grand Palace.", img: "navy linen short-sleeve collared shirt, lightweight long trousers, walking sneakers, leather belt", seed: 103 },
+      { act: "Port city tours (hot walking)", days: "Nov 5 · 9–10", items: ["tees","shorts","sneakers","cap","shades","rainshell"], note: "Long sweaty days on foot in KL + HCMC.", img: "moisture-wicking t-shirt, tailored shorts, walking sneakers, baseball cap, sunglasses", seed: 104 },
+      { act: "Langkawi jet ski", days: "Nov 6", items: ["rashguard","trunks","watershoes"], note: "You'll be soaked — rash guard for sun, waterproof phone pouch (in the kit bag).", img: "athletic rash guard shirt, swim trunks, water shoes", seed: 105 },
+      { act: "Ko Samui 4WD buggy", days: "Nov 12", items: ["tees","active-shorts","sneakers","trunks","watershoes"], note: "Closed-toe required; wear sneakers you don't mind trashing, trunks underneath + water shoes for the waterfall.", img: "t-shirt, quick-dry active shorts, rugged trainers, swim trunks, water shoes", seed: 106 },
+      { act: "Cruise sea days & pool (daytime)", days: "Nov 7 · 8 · 11", items: ["trunks","linen-stone","flipflops","shades"], note: "Lounging — not the themed pool parties (those costumes are in your checklist).", img: "swim trunks, open stone linen shirt, flip flops, sunglasses", seed: 107 },
+      { act: "Specialty dinners (Polo Grill · Toscana)", days: "Nov 4 · 6 · 10 · 11", items: ["polo","trousers","sandals","belt"], note: "Country-club casual — collar + trousers, no shorts. One of your linen shirts swaps in for a dressier night.", img: "smart polo shirt, tailored dress trousers, leather loafers, leather belt", seed: 108 },
+      { act: "Bangkok markets & casual", days: "Nov 14", items: ["polo","shorts","sneakers","cap"], note: "Early, casual, hands-free.", img: "polo shirt, tailored shorts, white sneakers, cap", seed: 109 }
     ]
   }
 };
 function mensCapsule() { return MENS_CAPSULE_BY_TRIP[state.currentTrip] || null; }
+// AI-rendered flat-lay image for a look (generated in the viewer's browser,
+// deterministic per seed). Prompted as a flat lay to avoid figure artifacts.
+function capImg(desc, seed) {
+  const prompt = `flat lay product photograph of a men's outfit on a clean neutral background, ${desc}, editorial menswear, soft natural light, top-down`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=400&height=500&seed=${seed}&nologo=true&model=flux`;
+}
 
 function vTop(t, color, inner, pattern) {
   const cx = 100, ln = FAB.line, s = [];
@@ -2260,12 +2266,17 @@ function renderPackOutfits() {
     // Derive, per piece, which activities wear it.
     const usedBy = {};
     cap.looks.forEach(lk => lk.items.forEach(id => { (usedBy[id] = usedBy[id] || []).push(lk.act); }));
-    let gh = '<div class="outfit-intro">One look per activity, built as a lean men\'s capsule — every piece earns its spot by pulling multiple days. The <b>packing kit</b> at the bottom is compiled straight from these looks (theme-night costumes are separate, in your Checklist).</div>';
+    let gh = '<div class="outfit-intro">One look per activity, built as a lean men\'s capsule — every piece earns its spot by pulling multiple days. The <b>packing kit</b> at the bottom is compiled straight from these looks (theme-night costumes are separate, in your Checklist). Images are AI-rendered representations of each outfit, not catalog photos — use them as a vibe, not an exact product.</div>';
     // The looks
     gh += `<div class="section-label pack-cat"><span class="label">The looks</span><span class="line"></span></div><div class="outfit-list">`;
     cap.looks.forEach(o => {
       const outfit = o.items.map(id => (byId[id] ? byId[id].label : id)).join(' + ');
+      const photo = o.img ? `<div class="lookbook-photo">
+            <img src="${capImg(o.img, o.seed)}" alt="${o.act} outfit flat lay" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.lookbook-fallback').style.display='flex';">
+            <div class="lookbook-fallback"><div class="lf-t">${o.act}</div><div class="lf-s">Image didn't load — the outfit is listed below.</div></div>
+          </div>` : '';
       gh += `<div class="outfit-card">
+        ${photo}
         <div class="outfit-head"><span class="outfit-name">${o.act}</span></div>
         ${o.days ? `<div class="outfit-shoes" style="margin-top:2px;">${o.days}</div>` : ''}
         <div class="outfit-formula" style="margin-top:7px;">${outfit}</div>
